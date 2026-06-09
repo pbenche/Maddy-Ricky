@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { X, Edit2, Plus, Settings } from "lucide-react";
 import { Camera } from "lucide-react";
 
@@ -48,84 +48,35 @@ function defaultMainAdventure(): Adventure {
   return { name: "Festival Season", date: d.toISOString().split("T")[0] };
 }
 
-// ─── Collage Background ───────────────────────────────────────────────────────
-interface PhotoPlacement {
-  src: string;
-  x: number;
-  y: number;
-  w: number;
-  rot: number;
-  blur: boolean;
-}
+// ─── Placeholder positions for the world canvas ───────────────────────────────
+const PLACEHOLDER_RECTS = [
+  { x: 120,  y: 80,   w: 320, h: 420 },
+  { x: 3100, y: 60,   w: 380, h: 280 },
+  { x: 200,  y: 1800, w: 420, h: 560 },
+  { x: 3200, y: 600,  w: 500, h: 380 },
+  { x: 3000, y: 1800, w: 320, h: 420 },
+  { x: 600,  y: 2500, w: 280, h: 360 },
+  { x: 3400, y: 2400, w: 360, h: 280 },
+  { x: 100,  y: 1200, w: 200, h: 280 },
+  { x: 2800, y: 200,  w: 240, h: 320 },
+  { x: 700,  y: 400,  w: 180, h: 240 },
+];
 
-function generatePlacements(photos: string[], vw: number, vh: number): PhotoPlacement[] {
-  const cxMin = vw / 2 - 460;
-  const cxMax = vw / 2 + 460;
-  const cyMin = 72;
-  const cyMax = vh;
-
-  return photos.map((src) => {
-    const w = 150 + Math.random() * 130;
-    const h = w * 0.75;
-    const x = Math.random() * Math.max(vw - w, 1);
-    const y = Math.random() * Math.max(vh - h, 1);
-    const rot = (Math.random() - 0.5) * 20;
-    const overlapX = x < cxMax && x + w > cxMin;
-    const overlapY = y < cyMax && y + h > cyMin;
-    const blur = overlapX && overlapY;
-    return { src, x, y, w, rot, blur };
-  });
-}
-
-function CollageBackground({ photos }: { photos: string[] }) {
-  const [placements, setPlacements] = useState<PhotoPlacement[]>([]);
-  const [visible, setVisible] = useState(true);
-
-  const regen = useCallback(() => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    setVisible(false);
-    setTimeout(() => {
-      setPlacements(generatePlacements(photos, vw, vh));
-      setVisible(true);
-    }, 750);
-  }, [photos]);
-
-  useEffect(() => {
-    if (photos.length === 0) { setPlacements([]); return; }
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    setPlacements(generatePlacements(photos, vw, vh));
-    setVisible(true);
-    const iv = setInterval(regen, 30000);
-    return () => clearInterval(iv);
-  }, [photos, regen]);
-
-  if (placements.length === 0) return null;
-
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 0, overflow: "hidden", pointerEvents: "none" }}>
-      {placements.map((p, i) => (
-        <img
-          key={i}
-          src={p.src}
-          alt=""
-          className="collage-photo"
-          style={{
-            left: p.x,
-            top: p.y,
-            width: p.w,
-            height: p.w * 0.75,
-            transform: `rotate(${p.rot}deg)`,
-            filter: p.blur ? "blur(5px)" : "none",
-            opacity: visible ? (p.blur ? 0.35 : 0.7) : 0,
-            transition: "opacity 1.5s ease",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+// Seeded positions for real photos spread around canvas (avoiding center ~1930-2870 x, ~1350-1650 y)
+const PHOTO_POSITIONS = [
+  { x: 120,  y: 80   },
+  { x: 3100, y: 60   },
+  { x: 200,  y: 1800 },
+  { x: 3200, y: 600  },
+  { x: 3000, y: 1800 },
+  { x: 600,  y: 2500 },
+  { x: 3400, y: 2400 },
+  { x: 100,  y: 1200 },
+  { x: 2800, y: 200  },
+  { x: 700,  y: 400  },
+  { x: 1400, y: 200  },
+  { x: 1500, y: 2600 },
+];
 
 // ─── Photo Modal ──────────────────────────────────────────────────────────────
 function PhotoModal({ photos, onClose, onUpdate }: { photos: string[]; onClose: () => void; onUpdate: (p: string[]) => void }) {
@@ -169,7 +120,7 @@ function PhotoModal({ photos, onClose, onUpdate }: { photos: string[]; onClose: 
               ><X size={12} /></button>
             </div>
           ))}
-          {photos.length === 0 && <p style={{ color: "#5a5248", fontSize: "0.85rem", gridColumn: "1/-1" }}>No photos yet. Upload some to create your collage.</p>}
+          {photos.length === 0 && <p style={{ color: "#5a5248", fontSize: "0.85rem", gridColumn: "1/-1" }}>No photos yet. Upload some to populate the canvas.</p>}
         </div>
         <input ref={fileRef} type="file" accept="image/*,.heic" multiple style={{ display: "none" }} onChange={handleFiles} />
         <button className="btn-primary" onClick={() => fileRef.current?.click()}>Upload Photos</button>
@@ -284,6 +235,11 @@ export default function DashboardPage() {
   const [togetherDate, setTogetherDate] = useState("2022-01-01");
   const [togetherModalOpen, setTogetherModalOpen] = useState(false);
 
+  // Panning canvas refs
+  const worldRef = useRef<HTMLDivElement>(null);
+  const pos = useRef({ x: 0, y: 0 });
+  const target = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     try { const p = localStorage.getItem("collagePhotos"); if (p) setPhotos(JSON.parse(p)); } catch {}
     try { const a = localStorage.getItem("adventures"); if (a) setAdventures(JSON.parse(a)); } catch {}
@@ -299,6 +255,34 @@ export default function DashboardPage() {
     try { const td = localStorage.getItem("togetherDate"); if (td) setTogetherDate(td); } catch {}
   }, []);
 
+  // Panning animation
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      target.current.x = (e.clientX - centerX) * -0.12;
+      target.current.y = (e.clientY - centerY) * -0.12;
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+
+    let raf: number;
+    const animate = () => {
+      pos.current.x += (target.current.x - pos.current.x) * 0.05;
+      pos.current.y += (target.current.y - pos.current.y) * 0.05;
+      const baseX = -2000 + window.innerWidth / 2;
+      const baseY = -1500 + window.innerHeight / 2;
+      if (worldRef.current) {
+        worldRef.current.style.transform = `translate(${baseX + pos.current.x}px, ${baseY + pos.current.y}px)`;
+      }
+      raf = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   function savePhotos(p: string[]) { setPhotos(p); localStorage.setItem("collagePhotos", JSON.stringify(p)); }
   function saveAdventures(d: AdventuresData) { setAdventures(d); localStorage.setItem("adventures", JSON.stringify(d)); }
   function saveCalendar(u: string) { setCalendarUrl(u); localStorage.setItem("calendarUrl", u); }
@@ -307,28 +291,82 @@ export default function DashboardPage() {
   const mainDays = daysUntil(adventures.main.date);
 
   return (
-    <>
-      <CollageBackground photos={photos} />
+    <div style={{ height: "100vh", overflow: "hidden" }}>
 
-      {/* Photo button */}
-      <button
-        onClick={() => setPhotoModalOpen(true)}
-        style={{
-          position: "fixed", top: 82, right: 24, zIndex: 10,
-          background: "rgba(12,12,12,0.82)", border: "1px solid var(--border)", borderRadius: 3,
-          color: "#9a8f82", display: "flex", alignItems: "center", gap: 6,
-          padding: "6px 14px", fontSize: "0.7rem", letterSpacing: "0.12em",
-          textTransform: "uppercase", backdropFilter: "blur(8px)",
-        }}
-      >
-        <Camera size={13} /> Photos
-      </button>
+      {/* Layer 1: Panning world canvas */}
+      <div style={{ position: "fixed", inset: 0, overflow: "hidden", zIndex: 0 }}>
+        <div
+          ref={worldRef}
+          style={{
+            position: "absolute",
+            width: "4000px",
+            height: "3000px",
+            willChange: "transform",
+            backgroundImage: "linear-gradient(rgba(168,197,216,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(168,197,216,0.4) 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+            backgroundColor: "#edeae4",
+          }}
+        >
+          {/* Photos or placeholder rects */}
+          {photos.length === 0
+            ? PLACEHOLDER_RECTS.map((r, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    left: r.x,
+                    top: r.y,
+                    width: r.w,
+                    height: r.h,
+                    background: "rgba(0,0,0,0.08)",
+                    border: "3px solid white",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+                  }}
+                />
+              ))
+            : photos.map((src, i) => {
+                const pos = PHOTO_POSITIONS[i % PHOTO_POSITIONS.length];
+                const size = 280 + (i % 3) * 80;
+                return (
+                  <img
+                    key={i}
+                    src={src}
+                    alt=""
+                    style={{
+                      position: "absolute",
+                      left: pos.x,
+                      top: pos.y,
+                      width: size,
+                      height: size * 0.75,
+                      objectFit: "cover",
+                      border: "3px solid white",
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+                    }}
+                  />
+                );
+              })
+          }
+        </div>
+      </div>
 
-      {/* Main content */}
-      <div style={{ position: "relative", zIndex: 1, maxWidth: 860, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Layer 2: Fixed dashboard content */}
+      <div style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex: 10,
+        width: "860px",
+        maxWidth: "calc(100vw - 40px)",
+        maxHeight: "calc(100vh - 120px)",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        gap: 20,
+      }}>
 
         {/* Card 1: Countdown */}
-        <div className="glass-card" style={{ padding: 32, textAlign: "center", position: "relative" }}>
+        <div className="card" style={{ textAlign: "center", position: "relative" }}>
           <button
             onClick={() => setAdventureModalOpen(true)}
             style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#9a8f82" }}
@@ -339,7 +377,7 @@ export default function DashboardPage() {
             {mainDays}
           </div>
           <div style={{ fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 12 }}>days</div>
-          <div style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "1.7rem", color: "#e8e0d4", marginBottom: 4 }}>
+          <div style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "1.7rem", color: "#1a1a18", marginBottom: 4 }}>
             {adventures.main.name}
           </div>
           <div style={{ fontSize: "0.8rem", color: "#9a8f82" }}>{formatDate(adventures.main.date)}</div>
@@ -349,8 +387,8 @@ export default function DashboardPage() {
               <div className="divider" style={{ margin: "20px 0" }} />
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
                 {adventures.upcoming.map((a, i) => (
-                  <div key={i} style={{ textAlign: "center", padding: "8px 16px", border: "1px solid var(--border)", borderRadius: 3 }}>
-                    <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#e8e0d4" }}>{a.name}</div>
+                  <div key={i} style={{ textAlign: "center", padding: "8px 16px", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 3 }}>
+                    <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#1a1a18" }}>{a.name}</div>
                     <div style={{ fontSize: "0.75rem", color: "#9a8f82" }}>{formatDate(a.date)}</div>
                   </div>
                 ))}
@@ -360,7 +398,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Card 2: This Week */}
-        <div className="glass-card" style={{ padding: 32, position: "relative" }}>
+        <div className="card" style={{ position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>This Week</h2>
             <button onClick={() => setCalModalOpen(true)} style={{ background: "none", border: "none", color: "#9a8f82" }} title="Calendar settings"><Settings size={14} /></button>
@@ -368,7 +406,7 @@ export default function DashboardPage() {
           {calendarUrl ? (
             <iframe src={calendarUrl} style={{ width: "100%", height: 300, border: 0, borderRadius: 3 }} title="Google Calendar" />
           ) : (
-            <div style={{ height: 200, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", border: "1px dashed var(--border)", borderRadius: 3, gap: 10 }}>
+            <div style={{ height: 200, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", border: "1px dashed rgba(0,0,0,0.12)", borderRadius: 3, gap: 10 }}>
               <p style={{ color: "#5a5248", fontSize: "0.85rem" }}>No calendar connected</p>
               <button className="btn-ghost" onClick={() => setCalModalOpen(true)}>Connect Google Calendar</button>
             </div>
@@ -377,19 +415,19 @@ export default function DashboardPage() {
 
         {/* Card 3: Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
-          <div className="glass-card" style={{ padding: 24, textAlign: "center" }}>
+          <div className="card" style={{ textAlign: "center" }}>
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Portfolio</div>
             <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
               ${portfolioTotal.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </div>
           </div>
-          <div className="glass-card" style={{ padding: 24, textAlign: "center" }}>
+          <div className="card" style={{ textAlign: "center" }}>
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Savings</div>
             <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
               ${savingsTotal.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </div>
           </div>
-          <div className="glass-card" style={{ padding: 24, textAlign: "center", cursor: "pointer" }} onClick={() => setTogetherModalOpen(true)} title="Click to edit start date">
+          <div className="card" style={{ textAlign: "center", cursor: "pointer" }} onClick={() => setTogetherModalOpen(true)} title="Click to edit start date">
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Together</div>
             <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
               {daysSince(togetherDate).toLocaleString()}
@@ -399,10 +437,24 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Layer 3: Photo manager button */}
+      <button
+        onClick={() => setPhotoModalOpen(true)}
+        style={{
+          position: "fixed", top: 82, right: 24, zIndex: 20,
+          background: "#2a2826", border: "none", borderRadius: 3,
+          color: "#b0a898", display: "flex", alignItems: "center", gap: 6,
+          padding: "6px 14px", fontSize: "0.7rem", letterSpacing: "0.12em",
+          textTransform: "uppercase",
+        }}
+      >
+        <Camera size={13} /> Photos
+      </button>
+
       {photoModalOpen && <PhotoModal photos={photos} onClose={() => setPhotoModalOpen(false)} onUpdate={savePhotos} />}
       {adventureModalOpen && <AdventureModal data={adventures} onClose={() => setAdventureModalOpen(false)} onSave={saveAdventures} />}
       {calModalOpen && <CalendarModal url={calendarUrl} onClose={() => setCalModalOpen(false)} onSave={saveCalendar} />}
       {togetherModalOpen && <TogetherModal date={togetherDate} onClose={() => setTogetherModalOpen(false)} onSave={saveTogetherDate} />}
-    </>
+    </div>
   );
 }

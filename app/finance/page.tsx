@@ -236,11 +236,11 @@ function PortfolioChart({ holdings, currentPrices }: { holdings: Holding[]; curr
         labels: { color: "#9a8f82", font: { size: 11 }, boxWidth: 12 },
       },
       tooltip: {
-        backgroundColor: "rgba(12,12,12,0.9)",
+        backgroundColor: "rgba(245,242,238,0.97)",
         borderColor: "rgba(201,169,110,0.3)",
         borderWidth: 1,
         titleColor: "#c9a96e",
-        bodyColor: "#e8e0d4",
+        bodyColor: "#1a1a18",
         callbacks: {
           label: (ctx: { dataset: { label?: string }; parsed: { y: number } }) =>
             ` ${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}`,
@@ -250,8 +250,8 @@ function PortfolioChart({ holdings, currentPrices }: { holdings: Holding[]; curr
     scales: {
       x: {
         ticks: { color: "#5a5248", font: { size: 10 }, maxTicksLimit: 8 },
-        grid: { color: "rgba(201,169,110,0.06)" },
-        border: { color: "rgba(201,169,110,0.1)" },
+        grid: { color: "rgba(0,0,0,0.06)" },
+        border: { color: "rgba(0,0,0,0.1)" },
       },
       y: {
         ticks: {
@@ -259,8 +259,8 @@ function PortfolioChart({ holdings, currentPrices }: { holdings: Holding[]; curr
           font: { size: 10 },
           callback: (v: string | number) => `$${Number(v).toLocaleString()}`,
         },
-        grid: { color: "rgba(201,169,110,0.08)" },
-        border: { color: "rgba(201,169,110,0.1)" },
+        grid: { color: "rgba(0,0,0,0.08)" },
+        border: { color: "rgba(0,0,0,0.1)" },
       },
     },
   };
@@ -350,14 +350,15 @@ export default function FinancePage() {
   const savingsTotal = savings.reduce((sum, s) => sum + s.amount, 0);
 
   return (
+    <div className="grid-bg">
     <div style={{ maxWidth: 920, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
 
       {/* Section 1: Holdings */}
-      <div className="glass-card" style={{ padding: 32 }}>
+      <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
             <h1 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Portfolio</h1>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#e8e0d4" }}>
+            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#1a1a18" }}>
               {formatCurrency(portfolioTotal)}
               {loadingPrices && <span style={{ fontSize: "0.7rem", color: "#5a5248", marginLeft: 10, fontFamily: "var(--font-inter)" }}>updating…</span>}
             </div>
@@ -389,11 +390,11 @@ export default function FinancePage() {
                   const pnlPct = cur != null ? ((cur - h.buyPrice) / h.buyPrice) * 100 : null;
                   const pnlColor = pnl == null ? "#9a8f82" : pnl >= 0 ? "#7ec99a" : "#c97e7e";
                   return (
-                    <tr key={h.id} style={{ borderBottom: "1px solid rgba(201,169,110,0.06)" }}>
+                    <tr key={h.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       <td style={{ padding: "10px 12px", fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "var(--accent)" }}>{h.symbol}</td>
-                      <td style={{ padding: "10px 12px", color: "#e8e0d4" }}>{h.shares}</td>
-                      <td style={{ padding: "10px 12px", color: "#e8e0d4" }}>{formatCurrency(h.buyPrice)}</td>
-                      <td style={{ padding: "10px 12px", color: "#e8e0d4" }}>{cur != null ? formatCurrency(cur) : <span style={{ color: "#5a5248" }}>--</span>}</td>
+                      <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{h.shares}</td>
+                      <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{formatCurrency(h.buyPrice)}</td>
+                      <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{cur != null ? formatCurrency(cur) : <span style={{ color: "#5a5248" }}>--</span>}</td>
                       <td style={{ padding: "10px 12px", color: pnlColor }}>{pnl != null ? (pnl >= 0 ? "+" : "") + formatCurrency(pnl) : "--"}</td>
                       <td style={{ padding: "10px 12px", color: pnlColor }}>{pnlPct != null ? (pnlPct >= 0 ? "+" : "") + pnlPct.toFixed(2) + "%" : "--"}</td>
                       <td style={{ padding: "10px 12px" }}>
@@ -413,7 +414,7 @@ export default function FinancePage() {
 
       {/* Section 2: Chart */}
       {holdings.length > 0 && (
-        <div className="glass-card" style={{ padding: 32 }}>
+        <div className="card" style={{ padding: 32 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Holdings Over Time</h2>
             <span style={{ fontSize: "0.68rem", color: "#5a5248", letterSpacing: "0.1em" }}>Live prices when available</span>
@@ -423,11 +424,11 @@ export default function FinancePage() {
       )}
 
       {/* Section 3: Savings */}
-      <div className="glass-card" style={{ padding: 32 }}>
+      <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
             <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Savings</h2>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#e8e0d4" }}>
+            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#1a1a18" }}>
               {formatCurrency(savingsTotal)} total
             </div>
           </div>
@@ -443,7 +444,7 @@ export default function FinancePage() {
             {savings.map((s) => (
               <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3 }}>
                 <div>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#e8e0d4" }}>{s.name}</div>
+                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#1a1a18" }}>{s.name}</div>
                   <div style={{ fontSize: "0.75rem", color: "#9a8f82" }}>{s.currency}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -473,6 +474,7 @@ export default function FinancePage() {
           onSave={addOrUpdateSavings}
         />
       )}
+    </div>
     </div>
   );
 }

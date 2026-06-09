@@ -117,10 +117,11 @@ export default function ProjectsPage() {
   const sorted = [...projects].sort((a, b) => a.order - b.order);
 
   return (
+    <div className="grid-bg">
     <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
 
       {/* Active Projects */}
-      <div className="glass-card" style={{ padding: 32 }}>
+      <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
           <h1 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)" }}>Our Projects</h1>
           <button
@@ -151,7 +152,7 @@ export default function ProjectsPage() {
                 borderRadius: 3,
                 opacity: completing === proj.id ? 0 : 1,
                 transition: "opacity 0.4s ease",
-                background: "rgba(255,255,255,0.015)",
+                background: "transparent",
               }}
             >
               {/* Checkbox */}
@@ -177,7 +178,7 @@ export default function ProjectsPage() {
 
               {/* Content */}
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.05rem", color: "#e8e0d4" }}>{proj.title}</div>
+                <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.05rem", color: "#1a1a18" }}>{proj.title}</div>
                 {proj.description && (
                   <div style={{ fontSize: "0.78rem", color: "#9a8f82", marginTop: 2 }}>{proj.description}</div>
                 )}
@@ -189,12 +190,12 @@ export default function ProjectsPage() {
                   <button
                     onClick={() => moveUp(proj.id)}
                     disabled={idx === 0}
-                    style={{ background: "none", border: "none", color: idx === 0 ? "#3a3530" : "#9a8f82", padding: 3 }}
+                    style={{ background: "none", border: "none", color: idx === 0 ? "#c8c0b8" : "#9a8f82", padding: 3 }}
                   ><ChevronUp size={14} /></button>
                   <button
                     onClick={() => moveDown(proj.id)}
                     disabled={idx === sorted.length - 1}
-                    style={{ background: "none", border: "none", color: idx === sorted.length - 1 ? "#3a3530" : "#9a8f82", padding: 3 }}
+                    style={{ background: "none", border: "none", color: idx === sorted.length - 1 ? "#c8c0b8" : "#9a8f82", padding: 3 }}
                   ><ChevronDown size={14} /></button>
                   <button onClick={() => deleteProject(proj.id)} style={{ background: "none", border: "none", color: "#9a8f82", padding: 3 }}>
                     <Trash2 size={13} />
@@ -223,7 +224,7 @@ export default function ProjectsPage() {
       </div>
 
       {/* Completed Projects */}
-      <div className="glass-card" style={{ padding: 32 }}>
+      <div className="card" style={{ padding: 32 }}>
         <button
           onClick={() => setCompletedOpen(!completedOpen)}
           style={{
@@ -253,7 +254,7 @@ export default function ProjectsPage() {
             {completed.map((cp) => (
               <div key={cp.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3, opacity: 0.7 }}>
                 <div>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#e8e0d4", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>{cp.title}</div>
+                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#1a1a18", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>{cp.title}</div>
                   <div style={{ fontSize: "0.72rem", color: "#5a5248", marginTop: 2 }}>{formatDate(cp.completedAt)}</div>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
@@ -272,6 +273,7 @@ export default function ProjectsPage() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

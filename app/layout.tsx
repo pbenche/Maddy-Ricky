@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="bg-[#edeae4] text-[#1a1a18] min-h-screen">
         <Nav />
-        <main className="pt-[72px]">{children}</main>
+        <main>{children}</main>
       </body>
     </html>
   );

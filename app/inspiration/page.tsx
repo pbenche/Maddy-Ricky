@@ -94,7 +94,7 @@ function AddModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: Inspi
                 style={{ border: "1px dashed var(--border)", borderRadius: 3, padding: 32, textAlign: "center", cursor: "pointer", marginBottom: 16 }}
               >
                 <p style={{ color: "#5a5248", fontSize: "0.85rem", marginBottom: 6 }}>Click to upload an image</p>
-                <p style={{ color: "#3a3530", fontSize: "0.75rem" }}>Supports JPG, PNG, HEIC</p>
+                <p style={{ color: "#c8c0b8", fontSize: "0.75rem" }}>Supports JPG, PNG, HEIC</p>
               </div>
             )}
           </div>
@@ -136,13 +136,13 @@ function Lightbox({ item, onClose }: { item: InspirationItem; onClose: () => voi
           style={{ maxWidth: "90vw", maxHeight: "80vh", objectFit: "contain", borderRadius: 3, display: "block" }}
         />
         {item.title && (
-          <div style={{ marginTop: 12, textAlign: "center", fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#e8e0d4" }}>
+          <div style={{ marginTop: 12, textAlign: "center", fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#1a1a18" }}>
             {item.link ? <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none" }}>{item.title}</a> : item.title}
           </div>
         )}
         <button
           onClick={onClose}
-          style={{ position: "absolute", top: -12, right: -12, background: "rgba(12,12,12,0.9)", border: "1px solid var(--border)", borderRadius: "50%", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", color: "#9a8f82", padding: 0 }}
+          style={{ position: "absolute", top: -12, right: -12, background: "#2a2826", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "50%", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", color: "#f0ece6", padding: 0 }}
         ><X size={14} /></button>
       </div>
     </div>
@@ -189,8 +189,8 @@ function MasonryGrid({ items, onDelete, onOpen }: { items: InspirationItem[]; on
             loading="lazy"
           />
           {item.title && (
-            <div style={{ padding: "8px 10px", background: "rgba(12,12,12,0.82)", borderTop: "1px solid var(--border)" }}>
-              <p style={{ fontSize: "0.78rem", color: "#e8e0d4", fontFamily: "var(--font-cormorant)", margin: 0 }}>{item.title}</p>
+            <div style={{ padding: "8px 10px", background: "rgba(245,242,238,0.95)", borderTop: "1px solid var(--border)" }}>
+              <p style={{ fontSize: "0.78rem", color: "#1a1a18", fontFamily: "var(--font-cormorant)", margin: 0 }}>{item.title}</p>
             </div>
           )}
           {/* Overlay with delete button */}
@@ -233,6 +233,7 @@ export default function InspirationPage() {
   }
 
   return (
+    <div className="grid-bg">
     <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
@@ -259,6 +260,7 @@ export default function InspirationPage() {
 
       {addModalOpen && <AddModal onClose={() => setAddModalOpen(false)} onAdd={addItem} />}
       {lightboxItem && <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />}
+    </div>
     </div>
   );
 }
