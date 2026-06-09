@@ -117,8 +117,7 @@ export default function ProjectsPage() {
   const sorted = [...projects].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="grid-bg">
-    <div style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="grid-bg" style={{ maxWidth: 760, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
 
       {/* Active Projects */}
       <div className="card" style={{ padding: 32 }}>
@@ -273,7 +272,6 @@ export default function ProjectsPage() {
           </div>
         )}
       </div>
-    </div>
     </div>
   );
 }

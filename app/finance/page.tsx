@@ -350,8 +350,7 @@ export default function FinancePage() {
   const savingsTotal = savings.reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <div className="grid-bg">
-    <div style={{ maxWidth: 920, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
+    <div className="grid-bg" style={{ maxWidth: 920, margin: "0 auto", padding: "40px 20px", display: "flex", flexDirection: "column", gap: 20 }}>
 
       {/* Section 1: Holdings */}
       <div className="card" style={{ padding: 32 }}>
@@ -474,7 +473,6 @@ export default function FinancePage() {
           onSave={addOrUpdateSavings}
         />
       )}
-    </div>
     </div>
   );
 }

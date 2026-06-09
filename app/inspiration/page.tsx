@@ -233,8 +233,7 @@ export default function InspirationPage() {
   }
 
   return (
-    <div className="grid-bg">
-    <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 20px" }}>
+    <div className="grid-bg" style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
@@ -260,7 +259,6 @@ export default function InspirationPage() {
 
       {addModalOpen && <AddModal onClose={() => setAddModalOpen(false)} onAdd={addItem} />}
       {lightboxItem && <Lightbox item={lightboxItem} onClose={() => setLightboxItem(null)} />}
-    </div>
     </div>
   );
 }
