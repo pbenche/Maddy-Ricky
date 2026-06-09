@@ -123,7 +123,7 @@ export default function ProjectsPage() {
       {/* Active Projects */}
       <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)" }}>Our Projects</h1>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--accent)" }}>Our Projects</h1>
           <button
             className={editMode ? "btn-primary" : "btn-ghost"}
             onClick={() => setEditMode(!editMode)}
@@ -178,7 +178,7 @@ export default function ProjectsPage() {
 
               {/* Content */}
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.05rem", color: "#1a1a18" }}>{proj.title}</div>
+                <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.05rem", color: "#1a1a18" }}>{proj.title}</div>
                 {proj.description && (
                   <div style={{ fontSize: "0.78rem", color: "#9a8f82", marginTop: 2 }}>{proj.description}</div>
                 )}
@@ -238,7 +238,7 @@ export default function ProjectsPage() {
             cursor: "pointer",
           }}
         >
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "#9a8f82" }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "#9a8f82" }}>
             Completed ({completed.length})
           </h2>
           <span style={{ color: "#9a8f82" }}>
@@ -254,7 +254,7 @@ export default function ProjectsPage() {
             {completed.map((cp) => (
               <div key={cp.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3, opacity: 0.7 }}>
                 <div>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#1a1a18", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>{cp.title}</div>
+                  <div style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#1a1a18", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>{cp.title}</div>
                   <div style={{ fontSize: "0.72rem", color: "#5a5248", marginTop: 2 }}>{formatDate(cp.completedAt)}</div>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>

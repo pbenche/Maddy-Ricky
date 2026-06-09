@@ -25,7 +25,7 @@ export default function Nav() {
         <div style={{
           width: 32, height: 32, background: "#8a6840", borderRadius: "50%",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "var(--font-cormorant)", fontSize: "0.9rem", color: "white",
+          fontFamily: "var(--font-heading)", fontSize: "0.9rem", color: "white",
           marginRight: 8, marginLeft: 8, flexShrink: 0
         }}>M</div>
         {links.map(l => (
@@ -35,7 +35,7 @@ export default function Nav() {
             fontSize: "0.68rem",
             letterSpacing: "0.16em",
             textTransform: "uppercase" as const,
-            fontFamily: "var(--font-inter)",
+            fontFamily: "var(--font-body)",
             color: pathname === l.href ? "#f0ece6" : "#8a8278",
             background: pathname === l.href ? "rgba(255,255,255,0.1)" : "transparent",
             textDecoration: "none",

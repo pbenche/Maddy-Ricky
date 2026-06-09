@@ -67,7 +67,7 @@ function AddModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: Inspi
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 460 }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Add Inspiration</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Add Inspiration</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
         </div>
 
@@ -136,7 +136,7 @@ function Lightbox({ item, onClose }: { item: InspirationItem; onClose: () => voi
           style={{ maxWidth: "90vw", maxHeight: "80vh", objectFit: "contain", borderRadius: 3, display: "block" }}
         />
         {item.title && (
-          <div style={{ marginTop: 12, textAlign: "center", fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#1a1a18" }}>
+          <div style={{ marginTop: 12, textAlign: "center", fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#1a1a18" }}>
             {item.link ? <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)", textDecoration: "none" }}>{item.title}</a> : item.title}
           </div>
         )}
@@ -190,7 +190,7 @@ function MasonryGrid({ items, onDelete, onOpen }: { items: InspirationItem[]; on
           />
           {item.title && (
             <div style={{ padding: "8px 10px", background: "rgba(245,242,238,0.95)", borderTop: "1px solid var(--border)" }}>
-              <p style={{ fontSize: "0.78rem", color: "#1a1a18", fontFamily: "var(--font-cormorant)", margin: 0 }}>{item.title}</p>
+              <p style={{ fontSize: "0.78rem", color: "#1a1a18", fontFamily: "var(--font-heading)", margin: 0 }}>{item.title}</p>
             </div>
           )}
           {/* Overlay with delete button */}
@@ -238,7 +238,7 @@ export default function InspirationPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2.2rem", color: "var(--accent)", marginBottom: 4 }}>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2.2rem", color: "var(--accent)", marginBottom: 4 }}>
             Inspiration
           </h1>
           <p style={{ fontSize: "0.78rem", color: "#9a8f82" }}>{items.length} {items.length === 1 ? "item" : "items"}</p>

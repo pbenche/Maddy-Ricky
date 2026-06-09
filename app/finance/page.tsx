@@ -89,7 +89,7 @@ function HoldingModal({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 420 }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>
             {initial ? "Edit Holding" : "Add Holding"}
           </h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
@@ -145,7 +145,7 @@ function SavingsModal({
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 380 }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>
             {initial ? "Edit Account" : "Add Account"}
           </h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
@@ -357,10 +357,10 @@ export default function FinancePage() {
       <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
-            <h1 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Portfolio</h1>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#1a1a18" }}>
+            <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Portfolio</h1>
+            <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.4rem", color: "#1a1a18" }}>
               {formatCurrency(portfolioTotal)}
-              {loadingPrices && <span style={{ fontSize: "0.7rem", color: "#5a5248", marginLeft: 10, fontFamily: "var(--font-inter)" }}>updating…</span>}
+              {loadingPrices && <span style={{ fontSize: "0.7rem", color: "#5a5248", marginLeft: 10, fontFamily: "var(--font-body)" }}>updating…</span>}
             </div>
           </div>
           <button className="btn-primary" onClick={() => setHoldingModal({ open: true })} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -391,7 +391,7 @@ export default function FinancePage() {
                   const pnlColor = pnl == null ? "#9a8f82" : pnl >= 0 ? "#7ec99a" : "#c97e7e";
                   return (
                     <tr key={h.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                      <td style={{ padding: "10px 12px", fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "var(--accent)" }}>{h.symbol}</td>
+                      <td style={{ padding: "10px 12px", fontFamily: "var(--font-heading)", fontSize: "1rem", color: "var(--accent)" }}>{h.symbol}</td>
                       <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{h.shares}</td>
                       <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{formatCurrency(h.buyPrice)}</td>
                       <td style={{ padding: "10px 12px", color: "#1a1a18" }}>{cur != null ? formatCurrency(cur) : <span style={{ color: "#5a5248" }}>--</span>}</td>
@@ -416,7 +416,7 @@ export default function FinancePage() {
       {holdings.length > 0 && (
         <div className="card" style={{ padding: 32 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Holdings Over Time</h2>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Holdings Over Time</h2>
             <span style={{ fontSize: "0.68rem", color: "#5a5248", letterSpacing: "0.1em" }}>Live prices when available</span>
           </div>
           <PortfolioChart holdings={holdings} currentPrices={currentPrices} />
@@ -427,8 +427,8 @@ export default function FinancePage() {
       <div className="card" style={{ padding: 32 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div>
-            <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Savings</h2>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.4rem", color: "#1a1a18" }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--accent)", marginBottom: 2 }}>Savings</h2>
+            <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.4rem", color: "#1a1a18" }}>
               {formatCurrency(savingsTotal)} total
             </div>
           </div>
@@ -444,11 +444,11 @@ export default function FinancePage() {
             {savings.map((s) => (
               <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3 }}>
                 <div>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.1rem", color: "#1a1a18" }}>{s.name}</div>
+                  <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#1a1a18" }}>{s.name}</div>
                   <div style={{ fontSize: "0.75rem", color: "#9a8f82" }}>{s.currency}</div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.3rem", color: "var(--accent)" }}>
+                  <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.3rem", color: "var(--accent)" }}>
                     {formatCurrency(s.amount, s.currency)}
                   </div>
                   <button onClick={() => setSavingsModal({ open: true, editing: s })} style={{ background: "none", border: "none", color: "#9a8f82" }}><Edit2 size={13} /></button>

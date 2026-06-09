@@ -101,13 +101,14 @@ function PhotoModal({ photos, onClose, onUpdate }: { photos: string[]; onClose: 
       results.push(b64);
     }
     onUpdate([...photos, ...results]);
+    if (fileRef.current) fileRef.current.value = "";
   }
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 600 }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Collage Photos</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Collage Photos</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(110px,1fr))", gap: 10, marginBottom: 20 }}>
@@ -146,7 +147,7 @@ function AdventureModal({ data, onClose, onSave }: { data: AdventuresData; onClo
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Adventures</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Adventures</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
         </div>
         <div style={{ marginBottom: 20 }}>
@@ -186,7 +187,7 @@ function CalendarModal({ url, onClose, onSave }: { url: string; onClose: () => v
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Calendar Settings</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Calendar Settings</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
         </div>
         <p style={{ fontSize: "0.82rem", color: "#9a8f82", marginBottom: 14, lineHeight: 1.7 }}>
@@ -209,7 +210,7 @@ function TogetherModal({ date, onClose, onSave }: { date: string; onClose: () =>
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" style={{ maxWidth: 360 }} onClick={(e) => e.stopPropagation()}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.5rem", color: "var(--accent)" }}>Together Since</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--accent)" }}>Together Since</h2>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#9a8f82" }}><X size={18} /></button>
         </div>
         <input type="date" value={val} onChange={(e) => setVal(e.target.value)} style={{ marginBottom: 16 }} />
@@ -373,11 +374,11 @@ export default function DashboardPage() {
             title="Edit adventures"
           ><Edit2 size={14} /></button>
 
-          <div style={{ fontSize: "5rem", fontFamily: "var(--font-cormorant)", color: "var(--accent)", lineHeight: 1, marginBottom: 4 }}>
+          <div style={{ fontSize: "5rem", fontFamily: "var(--font-heading)", color: "var(--accent)", lineHeight: 1, marginBottom: 4 }}>
             {mainDays}
           </div>
           <div style={{ fontSize: "0.66rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 12 }}>days</div>
-          <div style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontSize: "1.7rem", color: "#1a1a18", marginBottom: 4 }}>
+          <div style={{ fontFamily: "var(--font-heading)", fontStyle: "italic", fontSize: "1.7rem", color: "#1a1a18", marginBottom: 4 }}>
             {adventures.main.name}
           </div>
           <div style={{ fontSize: "0.8rem", color: "#9a8f82" }}>{formatDate(adventures.main.date)}</div>
@@ -388,7 +389,7 @@ export default function DashboardPage() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
                 {adventures.upcoming.map((a, i) => (
                   <div key={i} style={{ textAlign: "center", padding: "8px 16px", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 3 }}>
-                    <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1rem", color: "#1a1a18" }}>{a.name}</div>
+                    <div style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#1a1a18" }}>{a.name}</div>
                     <div style={{ fontSize: "0.75rem", color: "#9a8f82" }}>{formatDate(a.date)}</div>
                   </div>
                 ))}
@@ -400,7 +401,7 @@ export default function DashboardPage() {
         {/* Card 2: This Week */}
         <div className="card" style={{ position: "relative" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>This Week</h2>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "1.6rem", color: "var(--accent)" }}>This Week</h2>
             <button onClick={() => setCalModalOpen(true)} style={{ background: "none", border: "none", color: "#9a8f82" }} title="Calendar settings"><Settings size={14} /></button>
           </div>
           {calendarUrl ? (
@@ -417,19 +418,19 @@ export default function DashboardPage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
           <div className="card" style={{ textAlign: "center" }}>
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Portfolio</div>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
+            <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.6rem", color: "var(--accent)" }}>
               ${portfolioTotal.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </div>
           </div>
           <div className="card" style={{ textAlign: "center" }}>
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Savings</div>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
+            <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.6rem", color: "var(--accent)" }}>
               ${savingsTotal.toLocaleString("en-US", { maximumFractionDigits: 0 })}
             </div>
           </div>
           <div className="card" style={{ textAlign: "center", cursor: "pointer" }} onClick={() => setTogetherModalOpen(true)} title="Click to edit start date">
             <div style={{ fontSize: "0.63rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9a8f82", marginBottom: 8 }}>Together</div>
-            <div style={{ fontFamily: "var(--font-cormorant)", fontSize: "1.6rem", color: "var(--accent)" }}>
+            <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.6rem", color: "var(--accent)" }}>
               {daysSince(togetherDate).toLocaleString()}
             </div>
             <div style={{ fontSize: "0.7rem", color: "#5a5248", marginTop: 4 }}>days</div>

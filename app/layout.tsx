@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Montserrat, Karla } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/shared/Nav";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+const montserrat = Montserrat({
+  variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
+  weight: ["300", "400", "500", "600"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const karla = Karla({
+  variable: "--font-body",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
 });
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${karla.variable}`}>
       <body className="bg-[#edeae4] text-[#1a1a18] min-h-screen">
         <Nav />
         <main>{children}</main>
