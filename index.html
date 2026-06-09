@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maddy & Ricky</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- heic2any -->
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Fixed Collage Background -->
+  <div id="collage-layer"></div>
+  <!-- Blur overlay for dashboard center area -->
+  <div id="collage-blur-overlay"></div>
+
+  <!-- Navigation -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <div class="nav-logo">Maddy <span class="amp">&amp;</span> Ricky</div>
+      <ul class="nav-links">
+        <li><a href="#dashboard" class="nav-link" data-page="dashboard">Home</a></li>
+        <li><a href="#finance" class="nav-link" data-page="finance">Finance</a></li>
+        <li><a href="#projects" class="nav-link" data-page="projects">Projects</a></li>
+        <li><a href="#inspiration" class="nav-link" data-page="inspiration">Inspiration</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Pages -->
+  <main id="main-content">
+
+    <!-- ========== DASHBOARD PAGE ========== -->
+    <section id="page-dashboard" class="page">
+      <div class="dashboard-container">
+
+        <!-- Photo manager button -->
+        <button class="photo-manager-btn" id="openPhotoManager" title="Manage Photos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          Photos
+        </button>
+
+        <!-- Adventure Countdown -->
+        <div class="card" id="adventure-card">
+          <div class="card-header">
+            <h2 class="section-title">Next Adventure</h2>
+            <button class="icon-btn" id="editAdventureBtn" title="Edit adventures">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="countdown-display">
+            <div class="countdown-number" id="countdownNumber">—</div>
+            <div class="countdown-label">days away</div>
+          </div>
+          <div class="adventure-name" id="adventureName">—</div>
+          <div class="adventure-date" id="adventureDate">—</div>
+          <div class="upcoming-adventures" id="upcomingList"></div>
+        </div>
+
+        <!-- Weekly Calendar -->
+        <div class="card" id="calendar-card">
+          <div class="card-header">
+            <h2 class="section-title">Our Calendar</h2>
+            <button class="icon-btn" id="calendarSettingsBtn" title="Calendar settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </button>
+          </div>
+          <div id="calendarContainer">
+            <div class="calendar-placeholder" id="calendarPlaceholder">
+              <p>Connect your Google Calendar to see your schedule here.</p>
+              <button class="btn-secondary" id="calendarSettingsBtn2">Add Calendar URL</button>
+            </div>
+            <iframe id="calendarIframe" src="" style="display:none;" width="100%" height="400" frameborder="0" scrolling="no"></iframe>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Portfolio Value</div>
+            <div class="stat-value" id="statPortfolio">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Savings</div>
+            <div class="stat-value" id="statSavings">$0</div>
+          </div>
+          <div class="stat-card" id="daysTogetherCard">
+            <div class="stat-label">Days Together</div>
+            <div class="stat-value" id="statDaysTogether">—</div>
+            <button class="stat-edit-btn" id="editDaysTogetherBtn" title="Set start date">✎</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== FINANCE PAGE ========== -->
+    <section id="page-finance" class="page" style="display:none;">
+      <div class="page-container">
+        <h1 class="page-title">Finance</h1>
+
+        <!-- Holdings -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="section-title">Stock Holdings</h2>
+            <button class="btn-primary" id="addHoldingBtn">+ Add Holding</button>
+          </div>
+          <div class="table-wrapper">
+            <table class="data-table" id="holdingsTable">
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Company</th>
+                  <th>Shares</th>
+                  <th>Buy Price</th>
+                  <th>Buy Date</th>
+                  <th>Current</th>
+                  <th>Gain/Loss</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="holdingsBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="holdingsEmpty">No holdings yet. Add your first stock.</div>
+        </div>
+
+        <!-- Chart -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="section-title">Portfolio Performance</h2>
+          </div>
+          <div class="chart-container">
+            <canvas id="portfolioChart"></canvas>
+          </div>
+          <p class="chart-note">Live prices fetched from Yahoo Finance. Chart shows current holdings value.</p>
+        </div>
+
+        <!-- Savings -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="section-title">Savings Accounts</h2>
+            <button class="btn-primary" id="addSavingsBtn">+ Add Account</button>
+          </div>
+          <div id="savingsList"></div>
+          <div class="empty-state" id="savingsEmpty">No savings accounts yet.</div>
+          <div class="savings-total" id="savingsTotal"></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== PROJECTS PAGE ========== -->
+    <section id="page-projects" class="page" style="display:none;">
+      <div class="page-container">
+        <h1 class="page-title">Our Projects</h1>
+
+        <div class="card">
+          <div class="card-header">
+            <h2 class="section-title">Active</h2>
+            <div class="btn-row">
+              <button class="btn-primary" id="addProjectBtn">+ Add Project</button>
+              <button class="btn-secondary" id="toggleEditProjectsBtn">Edit</button>
+            </div>
+          </div>
+          <ul class="project-list" id="activeProjectsList"></ul>
+          <div class="empty-state" id="activeEmpty">No active projects. Add one!</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <button class="collapse-toggle" id="toggleCompleted">
+              <span>Completed 2026</span>
+              <span id="completedCount" class="badge">0</span>
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <ul class="project-list" id="completedProjectsList" style="display:none;"></ul>
+          <div class="empty-state" id="completedEmpty" style="display:none;">No completed projects yet.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== INSPIRATION PAGE ========== -->
+    <section id="page-inspiration" class="page" style="display:none;">
+      <div class="page-container">
+        <div class="page-header-row">
+          <h1 class="page-title">Inspiration Board</h1>
+          <button class="btn-primary" id="addInspirationBtn">+ Add</button>
+        </div>
+        <div class="masonry-grid" id="masonryGrid"></div>
+        <div class="empty-state" id="inspirationEmpty">Your inspiration board is empty. Add images, links, and ideas.</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Photo Manager Modal -->
+  <div class="modal-overlay" id="photoManagerModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Manage Photos</h3>
+        <button class="modal-close" data-modal="photoManagerModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="file-upload-area" for="photoUploadInput">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>Click to upload photos (JPG, PNG, HEIC)</span>
+          <input type="file" id="photoUploadInput" accept="image/*,.heic,.heif" multiple style="display:none;" />
+        </label>
+        <div id="photoGrid" class="photo-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adventure Edit Modal -->
+  <div class="modal-overlay" id="adventureModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Edit Adventures</h3>
+        <button class="modal-close" data-modal="adventureModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="adventureEditList"></div>
+        <div class="form-row">
+          <input type="text" id="newAdventureName" class="form-input" placeholder="Adventure name" />
+          <input type="date" id="newAdventureDate" class="form-input" />
+          <button class="btn-primary" id="addAdventureBtn">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Settings Modal -->
+  <div class="modal-overlay" id="calendarModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Google Calendar Settings</h3>
+        <button class="modal-close" data-modal="calendarModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Paste your Google Calendar embed URL below.<br>In Google Calendar: Settings → [Calendar name] → Integrate calendar → Copy embed URL.</p>
+        <input type="text" id="calendarUrlInput" class="form-input" placeholder="https://calendar.google.com/calendar/embed?src=..." />
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveCalendarUrl">Save</button>
+          <button class="btn-ghost" id="clearCalendarUrl">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Days Together Modal -->
+  <div class="modal-overlay" id="daysTogetherModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Days Together</h3>
+        <button class="modal-close" data-modal="daysTogetherModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label">When did you start your journey together?</label>
+        <input type="date" id="daysTogetherInput" class="form-input" />
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveDaysTogether">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Holding Modal -->
+  <div class="modal-overlay" id="holdingModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 id="holdingModalTitle">Add Holding</h3>
+        <button class="modal-close" data-modal="holdingModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="holdingSymbol" class="form-input" placeholder="Symbol (e.g. AAPL)" style="text-transform:uppercase;" />
+        <input type="text" id="holdingCompany" class="form-input" placeholder="Company name (optional)" />
+        <input type="number" id="holdingShares" class="form-input" placeholder="Shares" step="any" />
+        <input type="number" id="holdingBuyPrice" class="form-input" placeholder="Buy price (USD)" step="any" />
+        <input type="date" id="holdingBuyDate" class="form-input" />
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveHolding">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Savings Modal -->
+  <div class="modal-overlay" id="savingsModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 id="savingsModalTitle">Add Savings Account</h3>
+        <button class="modal-close" data-modal="savingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="savingsName" class="form-input" placeholder="Account name" />
+        <input type="number" id="savingsAmount" class="form-input" placeholder="Amount" step="any" />
+        <input type="text" id="savingsCurrency" class="form-input" placeholder="Currency (e.g. USD)" value="USD" />
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveSavings">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Project Modal -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Add Project</h3>
+        <button class="modal-close" data-modal="projectModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="projectTitle" class="form-input" placeholder="Project title" />
+        <textarea id="projectDesc" class="form-input form-textarea" placeholder="Description (optional)"></textarea>
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveProject">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Inspiration Modal -->
+  <div class="modal-overlay" id="inspirationModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Add Inspiration</h3>
+        <button class="modal-close" data-modal="inspirationModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="file-upload-area file-upload-sm" for="inspirationImageInput">
+          <span id="inspirationUploadLabel">Upload image or paste URL below</span>
+          <input type="file" id="inspirationImageInput" accept="image/*,.heic,.heif" style="display:none;" />
+        </label>
+        <input type="text" id="inspirationImageUrl" class="form-input" placeholder="Or paste image URL" />
+        <input type="text" id="inspirationTitle" class="form-input" placeholder="Title (optional)" />
+        <input type="text" id="inspirationLink" class="form-input" placeholder="Link URL (optional)" />
+        <div class="modal-actions">
+          <button class="btn-primary" id="saveInspiration">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inspiration Lightbox -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <div class="lightbox-content">
+      <img id="lightboxImg" src="" alt="" />
+      <div class="lightbox-info">
+        <div class="lightbox-title" id="lightboxTitle"></div>
+        <a class="lightbox-link" id="lightboxLink" href="" target="_blank" rel="noopener"></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/collage.js"></script>
+  <script src="js/adventure.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/inspiration.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
