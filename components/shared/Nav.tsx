@@ -12,35 +12,32 @@ const links = [
 export default function Nav() {
   const pathname = usePathname();
   return (
-    <nav style={{ position: "fixed", top: 24, left: "50%", transform: "translateX(-50%)", zIndex: 50 }}>
+    <nav style={{
+      position: "fixed",
+      top: 32,
+      left: 0,
+      right: 0,
+      zIndex: 50,
+      display: "flex",
+      justifyContent: "center",
+      pointerEvents: "none",
+    }}>
       <div style={{
-        background: "#2a2826",
-        borderRadius: "999px",
-        padding: "10px 8px",
         display: "flex",
+        gap: 52,
         alignItems: "center",
-        gap: "4px",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.25)"
+        pointerEvents: "all",
       }}>
-        <div style={{
-          width: 32, height: 32, background: "#8a6840", borderRadius: "50%",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "var(--font-heading)", fontSize: "0.9rem", color: "white",
-          marginRight: 8, marginLeft: 8, flexShrink: 0
-        }}>M</div>
         {links.map(l => (
           <Link key={l.href} href={l.href} style={{
-            padding: "6px 18px",
-            borderRadius: "999px",
-            fontSize: "0.68rem",
-            letterSpacing: "0.16em",
+            fontFamily: "var(--font-display)",
+            fontSize: "1.05rem",
+            letterSpacing: "0.18em",
             textTransform: "uppercase" as const,
-            fontFamily: "var(--font-body)",
-            color: pathname === l.href ? "#f0ece6" : "#8a8278",
-            background: pathname === l.href ? "rgba(255,255,255,0.1)" : "transparent",
+            color: pathname === l.href ? "#1a1a18" : "#9a8f82",
             textDecoration: "none",
-            transition: "all 0.2s",
-            whiteSpace: "nowrap" as const,
+            transition: "color 0.2s",
+            fontWeight: 400,
           }}>
             {l.label}
           </Link>
