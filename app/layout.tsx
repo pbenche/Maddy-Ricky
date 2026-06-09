@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
-      <body className="bg-[#0a0a0a] text-[#e8e0d4] min-h-screen">
+      <body className="bg-[#edeae4] text-[#1a1a18] min-h-screen">
         <Nav />
         <main className="pt-[72px]">{children}</main>
       </body>
