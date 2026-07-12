@@ -91,7 +91,7 @@ function AddModal({ onClose, onAdd }: { onClose: () => void; onAdd: (item: Inspi
             ) : (
               <div
                 onClick={() => fileRef.current?.click()}
-                style={{ border: "1px dashed var(--border)", borderRadius: 3, padding: 32, textAlign: "center", cursor: "pointer", marginBottom: 16 }}
+                style={{ border: "2px dashed var(--stroke)", borderRadius: 14, padding: 32, textAlign: "center", cursor: "pointer", marginBottom: 16 }}
               >
                 <p style={{ color: "#5a5248", fontSize: "0.85rem", marginBottom: 6 }}>Click to upload an image</p>
                 <p style={{ color: "#c8c0b8", fontSize: "0.75rem" }}>Supports JPG, PNG, HEIC</p>
@@ -171,9 +171,10 @@ function MasonryGrid({ items, onDelete, onOpen }: { items: InspirationItem[]; on
             marginBottom: 14,
             position: "relative",
             cursor: "pointer",
-            borderRadius: 3,
+            borderRadius: 14,
             overflow: "hidden",
-            border: "1px solid var(--border)",
+            border: "3px solid var(--stroke)",
+            boxShadow: "5px 5px 0 var(--stroke)",
           }}
           className="inspiration-card"
           onClick={() => onOpen(item)}
@@ -189,7 +190,7 @@ function MasonryGrid({ items, onDelete, onOpen }: { items: InspirationItem[]; on
             loading="lazy"
           />
           {item.title && (
-            <div style={{ padding: "8px 10px", background: "rgba(245,242,238,0.95)", borderTop: "1px solid var(--border)" }}>
+            <div style={{ padding: "8px 10px", background: "rgba(245,242,238,0.95)", borderTop: "2px solid var(--stroke)" }}>
               <p style={{ fontSize: "0.78rem", color: "#1a1a18", fontFamily: "var(--font-heading)", margin: 0 }}>{item.title}</p>
             </div>
           )}
@@ -249,7 +250,7 @@ export default function InspirationPage() {
 
       {/* Grid */}
       {items.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "80px 20px", border: "1px dashed var(--border)", borderRadius: 4 }}>
+        <div style={{ textAlign: "center", padding: "80px 20px", border: "2px dashed var(--stroke)", borderRadius: 16 }}>
           <p style={{ color: "#5a5248", fontSize: "0.9rem", marginBottom: 16 }}>Your inspiration board is empty</p>
           <button className="btn-ghost" onClick={() => setAddModalOpen(true)}>Add your first image</button>
         </div>

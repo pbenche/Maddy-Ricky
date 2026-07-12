@@ -142,13 +142,12 @@ export default function ProjectsPage() {
           {sorted.map((proj, idx) => (
             <div
               key={proj.id}
+              className="row-box"
               style={{
                 display: "flex",
                 alignItems: "flex-start",
                 gap: 12,
                 padding: "14px 16px",
-                border: "1px solid var(--border)",
-                borderRadius: 3,
                 opacity: completing === proj.id ? 0 : 1,
                 transition: "opacity 0.4s ease",
                 background: "transparent",
@@ -158,10 +157,10 @@ export default function ProjectsPage() {
               <button
                 onClick={() => !editMode && completeProject(proj.id)}
                 style={{
-                  width: 18,
-                  height: 18,
-                  border: "1px solid var(--border)",
-                  borderRadius: 2,
+                  width: 20,
+                  height: 20,
+                  border: "2px solid var(--stroke)",
+                  borderRadius: 5,
                   background: "transparent",
                   flexShrink: 0,
                   marginTop: 2,
@@ -172,7 +171,7 @@ export default function ProjectsPage() {
                   transition: "border-color 0.2s",
                 }}
                 onMouseEnter={(e) => { if (!editMode) (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent)"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--stroke)"; }}
               />
 
               {/* Content */}
@@ -251,7 +250,7 @@ export default function ProjectsPage() {
               <p style={{ color: "#5a5248", fontSize: "0.85rem", textAlign: "center", padding: "8px 0" }}>Nothing completed yet.</p>
             )}
             {completed.map((cp) => (
-              <div key={cp.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3, opacity: 0.7 }}>
+              <div key={cp.id} className="row-box" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", opacity: 0.7 }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", color: "#1a1a18", textDecoration: "line-through", textDecorationColor: "var(--border)" }}>{cp.title}</div>
                   <div style={{ fontSize: "0.72rem", color: "#5a5248", marginTop: 2 }}>{formatDate(cp.completedAt)}</div>
@@ -259,7 +258,7 @@ export default function ProjectsPage() {
                 <div style={{ display: "flex", gap: 8 }}>
                   <button
                     onClick={() => uncomplete(cp.id)}
-                    style={{ background: "none", border: "1px solid var(--border)", borderRadius: 2, color: "#9a8f82", fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 10px", cursor: "pointer" }}
+                    style={{ background: "none", border: "2px solid var(--stroke)", borderRadius: 8, color: "#5a5550", fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 10px", cursor: "pointer" }}
                   >
                     Restore
                   </button>

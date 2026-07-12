@@ -441,7 +441,7 @@ export default function FinancePage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {savings.map((s) => (
-              <div key={s.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", border: "1px solid var(--border)", borderRadius: 3 }}>
+              <div key={s.id} className="row-box" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px" }}>
                 <div>
                   <div style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "#1a1a18" }}>{s.name}</div>
                   <div style={{ fontSize: "0.75rem", color: "#9a8f82" }}>{s.currency}</div>

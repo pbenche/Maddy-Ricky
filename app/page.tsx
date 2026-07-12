@@ -369,13 +369,13 @@ export default function Dashboard() {
   }, []);
 
   const cardStyle: React.CSSProperties = {
-    background: "rgba(245,242,238,0.92)",
-    border: "1px solid rgba(0,0,0,0.07)",
-    borderRadius: 14,
+    background: "rgba(250,247,242,0.96)",
+    border: "3px solid #1a1a18",
+    borderRadius: 18,
     backdropFilter: "blur(12px)",
     WebkitBackdropFilter: "blur(12px)",
     padding: "20px 22px",
-    boxShadow: "0 2px 24px rgba(0,0,0,0.08)",
+    boxShadow: "6px 6px 0 #1a1a18",
     overflow: "hidden",
   };
 
@@ -417,11 +417,11 @@ export default function Dashboard() {
       {/* ── Photos button ── */}
       <button onClick={() => setPhotoModal(true)} style={{
         position: "fixed", top: 84, right: 24, zIndex: 20,
-        background: "rgba(245,242,238,0.9)", border: "1px solid rgba(0,0,0,0.1)",
+        background: "rgba(250,247,242,0.95)", border: "2px solid #1a1a18",
         borderRadius: 999, padding: "6px 14px", display: "flex", alignItems: "center", gap: 6,
         fontSize: "0.62rem", letterSpacing: "0.12em", textTransform: "uppercase",
         fontFamily: "var(--font-body)", color: "#5a5550",
-        backdropFilter: "blur(8px)", boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+        backdropFilter: "blur(8px)", boxShadow: "3px 3px 0 #1a1a18",
       }}>
         <Camera size={12} /> Photos
       </button>
@@ -485,9 +485,9 @@ export default function Dashboard() {
               <button onClick={() => setAddEventModal(true)} className="btn-ghost" style={{ fontSize: "0.65rem" }}>Add an event</button>
             </div>
           ) : (
-            <div style={{ flex: 1, overflowY: "auto" }}>
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
               {gcalEvents.map(ev => (
-                <div key={ev.id} style={{ padding: "9px 0", borderBottom: "1px solid rgba(0,0,0,0.05)", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+                <div key={ev.id} className="row-box" style={{ padding: "9px 12px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontSize: "0.85rem", color: "#1a1a18", fontWeight: 500, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.summary}</div>
                     {ev.description && <div style={{ fontSize: "0.72rem", color: "#9a8f82", marginTop: 1, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{ev.description}</div>}
@@ -507,8 +507,15 @@ export default function Dashboard() {
           <button onClick={() => setAdventureModal(true)} style={{ position: "absolute", top: 14, right: 14, background: "none", border: "none", color: "#c0b8b0" }}>
             <Edit2 size={13} />
           </button>
-          <div style={{ fontSize: "4.5rem", fontFamily: "var(--font-display)", color: "var(--accent)", lineHeight: 1, marginBottom: 2 }}>
-            {mainDays}
+          <div style={{
+            width: 116, height: 116, borderRadius: "50%",
+            background: "var(--accent)", border: "3px solid #1a1a18", boxShadow: "4px 4px 0 #1a1a18",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            marginBottom: 12,
+          }}>
+            <span style={{ fontSize: "2.6rem", fontFamily: "var(--font-display)", color: "#fff", lineHeight: 1 }}>
+              {mainDays}
+            </span>
           </div>
           <div style={{ ...labelStyle, marginBottom: 10 }}>days until</div>
           <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.4rem", color: "#1a1a18", marginBottom: 3 }}>
@@ -518,7 +525,7 @@ export default function Dashboard() {
           {adventures.upcoming.length > 0 && (
             <div style={{ marginTop: 14, display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center" }}>
               {adventures.upcoming.map((a, i) => (
-                <div key={i} style={{ padding: "4px 10px", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 999, fontSize: "0.68rem", color: "#7a7268" }}>
+                <div key={i} style={{ padding: "4px 10px", border: "2px solid #1a1a18", borderRadius: 999, fontSize: "0.68rem", color: "#3a3630", fontWeight: 500 }}>
                   {a.name} · {fmt(a.date)}
                 </div>
               ))}
@@ -549,8 +556,8 @@ export default function Dashboard() {
             <span style={labelStyle}>Adventures</span>
             <button onClick={() => setAdventureModal(true)} style={{ background: "none", border: "none", color: "#c0b8b0" }}><Edit2 size={13} /></button>
           </div>
-          <div style={{ flex: 1, overflowY: "auto" }}>
-            <div style={{ padding: "9px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+          <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
+            <div className="row-box" style={{ padding: "9px 12px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1rem" }}>{adventures.main.name}</span>
                 <span style={{ fontSize: "0.7rem", color: "var(--accent)", fontWeight: 500 }}>{mainDays}d</span>
@@ -558,7 +565,7 @@ export default function Dashboard() {
               <div style={{ fontSize: "0.7rem", color: "#9a8f82", marginTop: 2 }}>{fmtFull(adventures.main.date)}</div>
             </div>
             {adventures.upcoming.map((a, i) => (
-              <div key={i} style={{ padding: "9px 0", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+              <div key={i} className="row-box" style={{ padding: "9px 12px" }}>
                 <div style={{ fontSize: "0.88rem", color: "#1a1a18" }}>{a.name}</div>
                 <div style={{ fontSize: "0.7rem", color: "#9a8f82", marginTop: 2 }}>{fmtFull(a.date)}</div>
               </div>
