@@ -1,388 +1,822 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maddy & Ricky</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maddy & Ricky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500&family=Archivo+Black&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #E8E0D5;
+  --surface: rgba(235,228,218,0.94);
+  --surface-solid: #EDE6DC;
+  --border: rgba(0,0,0,0.09);
+  --border-med: rgba(0,0,0,0.16);
+  --stroke: #14110d;
+  --text: #111010;
+  --text-2: #5a5650;
+  --text-3: #9a9590;
+  --green: #2D6A4F; --green-bg: rgba(45,106,79,0.13);
+  --red: #C0392B; --red-bg: rgba(192,57,43,0.10);
+  --amber: #8a5c1a; --amber-bg: rgba(138,92,26,0.12);
+  --teal: #0F6E56; --teal-bg: rgba(15,110,86,0.12);
+  --radius: 20px; --radius-sm: 10px;
+}
+html, body { min-height: 100vh; overflow-x: hidden; }
+body { font-family: 'Archivo', sans-serif; background: var(--bg); color: var(--text); position: relative; }
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+/* ── Full-page collage background ── */
+#collage-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+.col-slot {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 3px;
+}
+.col-slot img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 1.2s ease;
+}
+.col-slot img.hidden { opacity: 0; }
+.col-slot img.visible { opacity: 1; }
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+/* Centre fog — cards sit here */
+#collage-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 65% at 50% 48%, rgba(232,224,213,0.97) 0%, rgba(232,224,213,0.93) 30%, rgba(232,224,213,0.55) 60%, rgba(232,224,213,0) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
 
-  <!-- heic2any -->
-  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+/* ── Page layout ── */
+.page {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 
-  <link rel="stylesheet" href="css/style.css" />
+/* ── Header ── */
+.header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 0.25rem; }
+.greeting { font-family: 'Archivo Black', sans-serif; font-size: clamp(30px,4.5vw,50px); font-weight: 900; line-height: 1; letter-spacing: -0.02em; text-transform: uppercase; }
+.greeting-sub { font-size: 12px; color: var(--text-2); margin-top: 5px; font-weight: 300; letter-spacing: 0.04em; }
+.header-meta { text-align: right; font-size: 10px; color: var(--text-3); letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.6; }
+
+/* ── Cards ── */
+.card { background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: var(--radius); border: 3px solid var(--stroke); box-shadow: 7px 7px 0 var(--stroke); padding: 1.25rem 1.5rem; }
+.card-label { font-size: 10px; letter-spacing: 0.1em; color: var(--text-3); text-transform: uppercase; margin-bottom: 0.65rem; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.section-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.divider { border: none; border-top: 1px solid var(--border-med); margin: 0.7rem 0; }
+
+/* ── Grid ── */
+.row-main { display: grid; grid-template-columns: 1fr 270px; gap: 1.25rem; }
+.row-side { display: flex; flex-direction: column; gap: 1.25rem; }
+.row-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+
+/* ── Week strip ── */
+.week-strip { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 0.9rem; }
+.day-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 2px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s; }
+.day-cell:hover { background: rgba(0,0,0,0.05); }
+.day-cell.today { background: rgba(0,0,0,0.06); border: 2px solid var(--stroke); }
+.day-name { font-size: 9px; color: var(--text-3); letter-spacing: 0.05em; text-transform: uppercase; }
+.day-num { font-size: 12px; font-weight: 400; color: var(--text-2); }
+.day-cell.today .day-num { background: var(--text); color: var(--bg); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; }
+.day-dots { display: flex; gap: 2px; height: 4px; }
+.dot { width: 4px; height: 4px; border-radius: 50%; }
+.event-item { display: flex; gap: 9px; padding: 5px 0; }
+.event-time { font-size: 11px; color: var(--text-3); min-width: 32px; padding-top: 1px; font-variant-numeric: tabular-nums; }
+.event-bar { width: 3px; border-radius: 2px; min-height: 30px; flex-shrink: 0; }
+.event-title { font-size: 13px; font-weight: 500; }
+.event-sub { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+
+/* ── Badges ── */
+.badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; border: 1.5px solid transparent; }
+.badge-green { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+.badge-red { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); border-color: var(--amber); }
+.badge-teal { background: var(--teal-bg); color: var(--teal); border-color: var(--teal); }
+.badge-dark { background: rgba(0,0,0,0.07); color: var(--text-2); border-color: var(--border-med); }
+
+/* ── Savings ── */
+.metric-big { font-family: 'Archivo Black', sans-serif; font-size: 26px; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+.metric-sub { font-size: 11px; color: var(--text-2); margin-top: 3px; font-weight: 300; }
+.split-bar { height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1); border: 2px solid var(--stroke); overflow: hidden; margin: 0.65rem 0 0.35rem; }
+.split-fill { height: 100%; background: var(--text); }
+.split-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-2); }
+
+/* ── Stock holdings ── */
+.holding-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; cursor: pointer; border-radius: var(--radius-sm); transition: background 0.15s; }
+.holding-row:hover { background: rgba(0,0,0,0.04); padding-left: 6px; padding-right: 6px; }
+.holding-name { font-size: 13px; font-weight: 500; }
+.holding-ticker { font-size: 10px; color: var(--text-3); letter-spacing: 0.04em; }
+.holding-right { text-align: right; }
+.holding-val { font-size: 13px; font-weight: 500; }
+.holding-gain { font-size: 10px; margin-top: 2px; }
+.edit-holding-form { background: rgba(0,0,0,0.04); border: 2px solid var(--stroke); border-radius: var(--radius-sm); padding: 10px; margin: 4px 0 8px; display: none; }
+.edit-holding-form.open { display: block; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+.form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.fi { font-size: 12px; padding: 6px 9px; border: 2px solid var(--stroke); border-radius: var(--radius-sm); background: rgba(255,255,255,0.7); font-family: 'Archivo', sans-serif; color: var(--text); width: 100%; }
+.fi::placeholder { color: var(--text-3); }
+.btn-small { font-size: 11px; font-weight: 500; padding: 6px 12px; border: 2px solid var(--stroke); border-radius: var(--radius-sm); background: #fff; font-family: 'Archivo', sans-serif; cursor: pointer; color: var(--text); box-shadow: 3px 3px 0 var(--stroke); transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s; }
+.btn-small:hover { background: rgba(255,255,255,0.9); transform: translate(1.5px, 1.5px); box-shadow: 1.5px 1.5px 0 var(--stroke); }
+.btn-small:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--stroke); }
+.btn-small.danger:hover { background: var(--red-bg); color: var(--red); }
+.add-holding-btn { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); background: none; border: 2px dashed var(--stroke); border-radius: var(--radius-sm); padding: 7px 10px; cursor: pointer; font-family: 'Archivo', sans-serif; width: 100%; justify-content: center; margin-top: 6px; transition: background 0.15s; }
+.add-holding-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+
+/* ── Countdown & adventures ── */
+.countdown-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin: 0.65rem 0 1rem; }
+.cd-unit { background: rgba(0,0,0,0.05); border: 2px solid var(--stroke); border-radius: var(--radius-sm); padding: 9px 4px; text-align: center; }
+.cd-unit.cd-hero { background: var(--amber); border-color: var(--stroke); box-shadow: 3px 3px 0 var(--stroke); }
+.cd-unit.cd-hero .cd-num, .cd-unit.cd-hero .cd-label { color: #fff; }
+.cd-num { font-family: 'Archivo Black', sans-serif; font-size: 20px; line-height: 1; letter-spacing: -0.02em; }
+.cd-label { font-size: 9px; color: var(--text-3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+.adventure-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: var(--radius-sm); transition: background 0.15s; }
+.adventure-item:hover { background: rgba(0,0,0,0.04); }
+.adv-name { font-size: 12px; font-weight: 500; }
+.adv-date { font-size: 11px; color: var(--text-2); font-weight: 300; }
+.adv-del { background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 14px; padding: 0 2px; display: none; }
+.adventure-item:hover .adv-del { display: block; }
+.add-adv-row { display: flex; gap: 6px; margin-top: 8px; }
+.add-adv-row input { flex: 1; }
+
+/* ── Photos card ── */
+.small-btn { font-size: 11px; font-weight: 500; color: var(--text); background: #fff; border: 2px solid var(--stroke); border-radius: var(--radius-sm); padding: 4px 11px; cursor: pointer; font-family: 'Archivo', sans-serif; box-shadow: 3px 3px 0 var(--stroke); transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s; }
+.small-btn:hover { background: rgba(255,255,255,0.9); transform: translate(1.5px, 1.5px); box-shadow: 1.5px 1.5px 0 var(--stroke); }
+.small-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--stroke); }
+.photo-placeholder-inner { text-align: center; color: var(--text-3); font-size: 12px; font-weight: 300; padding: 1.5rem 0; }
+.photo-placeholder-inner svg { display: block; margin: 0 auto 8px; opacity: 0.3; }
+
+/* ── Projects ── */
+.project-item { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: var(--radius-sm); transition: background 0.15s; }
+.project-item:hover { background: rgba(0,0,0,0.04); }
+.project-item input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; accent-color: var(--text); }
+.project-label { font-size: 13px; color: var(--text); flex: 1; }
+.project-label.done { text-decoration: line-through; color: var(--text-3); }
+.project-actions { display: none; align-items: center; gap: 3px; }
+.project-item:hover .project-actions { display: flex; }
+.proj-btn { background: #fff; border: 2px solid var(--stroke); border-radius: 7px; width: 23px; height: 23px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); font-size: 11px; transition: background 0.15s; }
+.proj-btn:hover { background: rgba(0,0,0,0.06); }
+.proj-btn.del:hover { background: var(--red-bg); color: var(--red); }
+.completed-header { font-size: 10px; letter-spacing: 0.08em; color: var(--text-3); text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 5px; user-select: none; }
+.completed-header svg { transition: transform 0.2s; }
+.completed-header.collapsed svg { transform: rotate(-90deg); }
+.completed-list.hidden { display: none; }
+.completed-item { display: flex; align-items: center; gap: 9px; padding: 4px 6px; border-radius: var(--radius-sm); }
+.completed-label { font-size: 12px; color: var(--text-3); text-decoration: line-through; flex: 1; }
+.completed-date { font-size: 10px; color: var(--text-3); }
+
+/* ── Cal auth ── */
+.cal-auth { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 1rem 0; }
+.cal-auth p { font-size: 12px; color: var(--text-2); text-align: center; font-weight: 300; }
+.signin-btn { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border: 2px solid var(--stroke); border-radius: var(--radius-sm); background: #fff; cursor: pointer; font-size: 12px; font-family: 'Archivo', sans-serif; color: var(--text); box-shadow: 3px 3px 0 var(--stroke); transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.15s; }
+.signin-btn:hover { background: rgba(255,255,255,0.9); transform: translate(1.5px, 1.5px); box-shadow: 1.5px 1.5px 0 var(--stroke); }
+.signin-btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--stroke); }
+.cal-loading { font-size: 12px; color: var(--text-3); padding: 0.75rem 0; text-align: center; font-weight: 300; }
+
+/* ── Chart ── */
+.chart-wrap { position: relative; height: 180px; margin-top: 0.5rem; }
+
+/* ── Footer ── */
+.footer { text-align: center; font-size: 10px; color: var(--text-3); letter-spacing: 0.08em; text-transform: uppercase; padding-top: 0.5rem; }
+
+@media (max-width: 700px) {
+  .row-main, .row-bottom { grid-template-columns: 1fr; }
+  .greeting { font-size: 28px; }
+  .page { padding: 1.5rem 1rem 3rem; }
+}
+</style>
 </head>
 <body>
 
-  <!-- Fixed Collage Background -->
-  <div id="collage-layer"></div>
-  <!-- Blur overlay for dashboard center area -->
-  <div id="collage-blur-overlay"></div>
+<div id="collage-bg"></div>
 
-  <!-- Navigation -->
-  <nav id="main-nav">
-    <div class="nav-inner">
-      <div class="nav-logo">Maddy <span class="amp">&amp;</span> Ricky</div>
-      <ul class="nav-links">
-        <li><a href="#dashboard" class="nav-link" data-page="dashboard">Home</a></li>
-        <li><a href="#finance" class="nav-link" data-page="finance">Finance</a></li>
-        <li><a href="#projects" class="nav-link" data-page="projects">Projects</a></li>
-        <li><a href="#inspiration" class="nav-link" data-page="inspiration">Inspiration</a></li>
-      </ul>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="greeting" id="greeting">Good morning</div>
+      <div class="greeting-sub" id="date-line">—</div>
     </div>
-  </nav>
+    <div class="header-meta">
+      Maddy &amp; Ricky<br>
+      <span id="cal-status-top" style="color:var(--text-3);">Calendar not connected</span>
+    </div>
+  </div>
 
-  <!-- Pages -->
-  <main id="main-content">
-
-    <!-- ========== DASHBOARD PAGE ========== -->
-    <section id="page-dashboard" class="page">
-      <div class="dashboard-container">
-
-        <!-- Photo manager button -->
-        <button class="photo-manager-btn" id="openPhotoManager" title="Manage Photos">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
-          </svg>
-          Photos
-        </button>
-
-        <!-- Adventure Countdown -->
-        <div class="card" id="adventure-card">
-          <div class="card-header">
-            <h2 class="section-title">Next Adventure</h2>
-            <button class="icon-btn" id="editAdventureBtn" title="Edit adventures">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
-            </button>
-          </div>
-          <div class="countdown-display">
-            <div class="countdown-number" id="countdownNumber">—</div>
-            <div class="countdown-label">days away</div>
-          </div>
-          <div class="adventure-name" id="adventureName">—</div>
-          <div class="adventure-date" id="adventureDate">—</div>
-          <div class="upcoming-adventures" id="upcomingList"></div>
-        </div>
-
-        <!-- Weekly Calendar -->
-        <div class="card" id="calendar-card">
-          <div class="card-header">
-            <h2 class="section-title">Our Calendar</h2>
-            <button class="icon-btn" id="calendarSettingsBtn" title="Calendar settings">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-              </svg>
-            </button>
-          </div>
-          <div id="calendarContainer">
-            <div class="calendar-placeholder" id="calendarPlaceholder">
-              <p>Connect your Google Calendar to see your schedule here.</p>
-              <button class="btn-secondary" id="calendarSettingsBtn2">Add Calendar URL</button>
-            </div>
-            <iframe id="calendarIframe" src="" style="display:none;" width="100%" height="400" frameborder="0" scrolling="no"></iframe>
-          </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-label">Portfolio Value</div>
-            <div class="stat-value" id="statPortfolio">$0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total Savings</div>
-            <div class="stat-value" id="statSavings">$0</div>
-          </div>
-          <div class="stat-card" id="daysTogetherCard">
-            <div class="stat-label">Days Together</div>
-            <div class="stat-value" id="statDaysTogether">—</div>
-            <button class="stat-edit-btn" id="editDaysTogetherBtn" title="Set start date">✎</button>
-          </div>
-        </div>
-
+  <!-- Main row: Calendar + Savings -->
+  <div class="row-main">
+    <div class="card">
+      <div class="section-top">
+        <span class="card-title">This week</span>
+        <span class="badge badge-dark" id="event-count-badge">—</span>
       </div>
-    </section>
-
-    <!-- ========== FINANCE PAGE ========== -->
-    <section id="page-finance" class="page" style="display:none;">
-      <div class="page-container">
-        <h1 class="page-title">Finance</h1>
-
-        <!-- Holdings -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="section-title">Stock Holdings</h2>
-            <button class="btn-primary" id="addHoldingBtn">+ Add Holding</button>
-          </div>
-          <div class="table-wrapper">
-            <table class="data-table" id="holdingsTable">
-              <thead>
-                <tr>
-                  <th>Symbol</th>
-                  <th>Company</th>
-                  <th>Shares</th>
-                  <th>Buy Price</th>
-                  <th>Buy Date</th>
-                  <th>Current</th>
-                  <th>Gain/Loss</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="holdingsBody"></tbody>
-            </table>
-          </div>
-          <div class="empty-state" id="holdingsEmpty">No holdings yet. Add your first stock.</div>
+      <div class="week-strip" id="week-strip"></div>
+      <hr class="divider">
+      <div id="cal-body">
+        <div class="cal-auth">
+          <p>Connect Google Calendar to see your real events</p>
+          <button class="signin-btn" onclick="signIn()">
+            <svg width="14" height="14" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Sign in with Google
+          </button>
         </div>
-
-        <!-- Chart -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="section-title">Portfolio Performance</h2>
-          </div>
-          <div class="chart-container">
-            <canvas id="portfolioChart"></canvas>
-          </div>
-          <p class="chart-note">Live prices fetched from Yahoo Finance. Chart shows current holdings value.</p>
-        </div>
-
-        <!-- Savings -->
-        <div class="card">
-          <div class="card-header">
-            <h2 class="section-title">Savings Accounts</h2>
-            <button class="btn-primary" id="addSavingsBtn">+ Add Account</button>
-          </div>
-          <div id="savingsList"></div>
-          <div class="empty-state" id="savingsEmpty">No savings accounts yet.</div>
-          <div class="savings-total" id="savingsTotal"></div>
-        </div>
-
       </div>
-    </section>
+    </div>
 
-    <!-- ========== PROJECTS PAGE ========== -->
-    <section id="page-projects" class="page" style="display:none;">
-      <div class="page-container">
-        <h1 class="page-title">Our Projects</h1>
-
-        <div class="card">
-          <div class="card-header">
-            <h2 class="section-title">Active</h2>
-            <div class="btn-row">
-              <button class="btn-primary" id="addProjectBtn">+ Add Project</button>
-              <button class="btn-secondary" id="toggleEditProjectsBtn">Edit</button>
-            </div>
+    <div class="row-side">
+      <!-- Savings -->
+      <div class="card">
+        <div class="card-label">Total savings</div>
+        <div class="metric-big" id="savings-total">kr 0</div>
+        <div class="metric-sub" id="savings-sub">Update below</div>
+        <div class="split-bar"><div class="split-fill" id="savings-bar" style="width:50%"></div></div>
+        <div class="split-labels">
+          <span id="savings-you">You · —</span>
+          <span id="savings-her">Her · —</span>
+        </div>
+        <hr class="divider">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:2px;">
+          <div>
+            <div style="font-size:10px;color:var(--text-3);margin-bottom:3px;">Your savings (kr)</div>
+            <input class="fi" id="sav-you" type="number" placeholder="91000" oninput="updateSavings()">
           </div>
-          <ul class="project-list" id="activeProjectsList"></ul>
-          <div class="empty-state" id="activeEmpty">No active projects. Add one!</div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <button class="collapse-toggle" id="toggleCompleted">
-              <span>Completed 2026</span>
-              <span id="completedCount" class="badge">0</span>
-              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
+          <div>
+            <div style="font-size:10px;color:var(--text-3);margin-bottom:3px;">Her savings (kr)</div>
+            <input class="fi" id="sav-her" type="number" placeholder="93200" oninput="updateSavings()">
           </div>
-          <ul class="project-list" id="completedProjectsList" style="display:none;"></ul>
-          <div class="empty-state" id="completedEmpty" style="display:none;">No completed projects yet.</div>
         </div>
-
       </div>
-    </section>
 
-    <!-- ========== INSPIRATION PAGE ========== -->
-    <section id="page-inspiration" class="page" style="display:none;">
-      <div class="page-container">
-        <div class="page-header-row">
-          <h1 class="page-title">Inspiration Board</h1>
-          <button class="btn-primary" id="addInspirationBtn">+ Add</button>
+      <!-- Countdown -->
+      <div class="card">
+        <div class="section-top">
+          <span class="card-title" id="main-adv-name">Next adventure</span>
+          <span class="badge badge-amber" id="main-adv-badge">—</span>
         </div>
-        <div class="masonry-grid" id="masonryGrid"></div>
-        <div class="empty-state" id="inspirationEmpty">Your inspiration board is empty. Add images, links, and ideas.</div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ===== MODALS ===== -->
-
-  <!-- Photo Manager Modal -->
-  <div class="modal-overlay" id="photoManagerModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Manage Photos</h3>
-        <button class="modal-close" data-modal="photoManagerModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label class="file-upload-area" for="photoUploadInput">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span>Click to upload photos (JPG, PNG, HEIC)</span>
-          <input type="file" id="photoUploadInput" accept="image/*,.heic,.heif" multiple style="display:none;" />
-        </label>
-        <div id="photoGrid" class="photo-grid"></div>
+        <div class="countdown-grid">
+          <div class="cd-unit cd-hero"><div class="cd-num" id="cd-days">—</div><div class="cd-label">days</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-hrs">—</div><div class="cd-label">hrs</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-min">—</div><div class="cd-label">min</div></div>
+          <div class="cd-unit"><div class="cd-num" id="cd-sec">—</div><div class="cd-label">sec</div></div>
+        </div>
+        <hr class="divider">
+        <div id="adv-list"></div>
+        <div class="add-adv-row">
+          <input class="fi add-adv-row" style="flex:2;min-width:0;" id="adv-name-input" placeholder="Adventure name">
+          <input class="fi" style="flex:1;min-width:0;" id="adv-date-input" type="date">
+          <button class="btn-small" onclick="addAdventure()">+ Add</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Adventure Edit Modal -->
-  <div class="modal-overlay" id="adventureModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Edit Adventures</h3>
-        <button class="modal-close" data-modal="adventureModal">&times;</button>
+  <!-- Bottom row: Stocks + Photos -->
+  <div class="row-bottom">
+
+    <!-- Stock holdings -->
+    <div class="card">
+      <div class="section-top">
+        <span class="card-title">Holdings</span>
+        <span style="font-size:10px;color:var(--text-3);">USD</span>
       </div>
-      <div class="modal-body">
-        <div id="adventureEditList"></div>
+      <div id="holdings-list"></div>
+      <button class="add-holding-btn" onclick="openAddHolding()">+ Add holding</button>
+      <div class="edit-holding-form" id="add-holding-form">
+        <div class="form-row three">
+          <input class="fi" id="h-ticker" placeholder="Ticker (AAPL)">
+          <input class="fi" id="h-name" placeholder="Name">
+          <input class="fi" id="h-shares" type="number" placeholder="Shares">
+        </div>
         <div class="form-row">
-          <input type="text" id="newAdventureName" class="form-input" placeholder="Adventure name" />
-          <input type="date" id="newAdventureDate" class="form-input" />
-          <button class="btn-primary" id="addAdventureBtn">Add</button>
+          <input class="fi" id="h-buy-price" type="number" step="0.01" placeholder="Buy price (USD)">
+          <input class="fi" id="h-buy-date" type="date">
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-small" onclick="saveNewHolding()">Save</button>
+          <button class="btn-small" onclick="closeAddHolding()">Cancel</button>
         </div>
       </div>
+      <hr class="divider" style="margin-top:0.75rem;">
+      <div class="chart-wrap"><canvas id="stock-chart"></canvas></div>
+    </div>
+
+    <!-- Photos -->
+    <div class="card">
+      <div class="section-top">
+        <span class="card-title">Our moments</span>
+        <button class="small-btn" onclick="document.getElementById('photo-upload').click()">+ Add photos</button>
+      </div>
+      <div id="photo-placeholder-inner" class="photo-placeholder-inner">
+        <svg width="30" height="30" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21" stroke-linecap="round"/></svg>
+        Add photos — they'll appear as a collage in the background
+      </div>
+      <div id="photo-count-msg" style="font-size:12px;color:var(--text-2);display:none;"></div>
+      <input type="file" id="photo-upload" accept="image/*,.heic,.heif,image/heic,image/heif" multiple style="display:none;" onchange="handlePhotos(event)">
     </div>
   </div>
 
-  <!-- Calendar Settings Modal -->
-  <div class="modal-overlay" id="calendarModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>Google Calendar Settings</h3>
-        <button class="modal-close" data-modal="calendarModal">&times;</button>
+  <!-- Projects -->
+  <div class="card">
+    <div class="section-top">
+      <span class="card-title">Shared projects</span>
+      <div style="display:flex;gap:6px;">
+        <button class="small-btn" id="edit-btn" onclick="toggleEditMode()">✏ Edit</button>
+        <button class="small-btn" onclick="addProject()">+ Add</button>
       </div>
-      <div class="modal-body">
-        <p class="modal-desc">Paste your Google Calendar embed URL below.<br>In Google Calendar: Settings → [Calendar name] → Integrate calendar → Copy embed URL.</p>
-        <input type="text" id="calendarUrlInput" class="form-input" placeholder="https://calendar.google.com/calendar/embed?src=..." />
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveCalendarUrl">Save</button>
-          <button class="btn-ghost" id="clearCalendarUrl">Clear</button>
+    </div>
+    <div id="projects"></div>
+    <div id="completed-section" style="display:none;">
+      <hr class="divider">
+      <div class="completed-header" id="completed-header" onclick="toggleCompleted()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Completed 2026 &nbsp;<span id="completed-count" class="badge badge-teal">0</span>
+      </div>
+      <div class="completed-list" id="completed-list"></div>
+    </div>
+  </div>
+
+  <div class="footer">Maddy &amp; Ricky · Made with Claude</div>
+</div>
+
+<script>
+// ── Helpers ──
+const CLIENT_ID = '13184039877-gg06k07m8tslanbmb5o00pv21a9r58jo.apps.googleusercontent.com';
+const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
+let accessToken = null;
+
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+function load(key, def) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch(e) { return def; } }
+
+// ── Date & greeting ──
+const now = new Date();
+const hr = now.getHours();
+document.getElementById('greeting').textContent =
+  hr < 5 ? 'Good night' : hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SHORT_DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+document.getElementById('date-line').textContent = DAY_NAMES[now.getDay()] + ', ' + now.getDate() + ' ' + MONTH_NAMES[now.getMonth()];
+
+// ── Week strip ──
+const strip = document.getElementById('week-strip');
+const monday = new Date(now);
+monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+monday.setHours(0,0,0,0);
+const BAR_COLORS = ['#AFA9EC','#F0997B','#5DCAA5','#85B7EB','#FAC775','#C0DD97','#ED93B1'];
+for (let i = 0; i < 7; i++) {
+  const d = new Date(monday); d.setDate(monday.getDate() + i);
+  const isToday = d.toDateString() === now.toDateString();
+  const cell = document.createElement('div');
+  cell.className = 'day-cell' + (isToday ? ' today' : '');
+  const numHtml = isToday ? '<span class="day-num">' + d.getDate() + '</span>' : '<span class="day-num">' + d.getDate() + '</span>';
+  cell.innerHTML = '<span class="day-name">' + SHORT_DAYS[d.getDay()] + '</span>' + numHtml + '<div class="day-dots" id="dots-' + d.toISOString().split('T')[0] + '"></div>';
+  strip.appendChild(cell);
+}
+
+// ── Google Calendar ──
+function signIn() {
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID, scope: SCOPES,
+    callback: (r) => {
+      if (r.access_token) {
+        accessToken = r.access_token;
+        document.getElementById('cal-status-top').innerHTML = '<span style="color:#2D6A4F;">● Connected</span>';
+        loadCalendarEvents();
+      }
+    }
+  });
+  client.requestAccessToken();
+}
+function loadCalendarEvents() {
+  const body = document.getElementById('cal-body');
+  body.innerHTML = '<div class="cal-loading">Loading...</div>';
+  const weekEnd = new Date(monday); weekEnd.setDate(monday.getDate() + 7);
+  const p = new URLSearchParams({ timeMin: monday.toISOString(), timeMax: weekEnd.toISOString(), singleEvents: true, orderBy: 'startTime', maxResults: 20 });
+  fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events?' + p, { headers: { Authorization: 'Bearer ' + accessToken } })
+    .then(r => r.json()).then(data => {
+      const evs = data.items || [];
+      document.getElementById('event-count-badge').textContent = evs.length + ' events';
+      body.innerHTML = '';
+      if (!evs.length) { body.innerHTML = '<div class="cal-loading">No events this week 🎉</div>'; return; }
+      evs.slice(0,6).forEach((ev,i) => {
+        const start = ev.start.dateTime ? new Date(ev.start.dateTime) : null;
+        const timeStr = !start ? SHORT_DAYS[new Date(ev.start.date+'T12:00:00').getDay()] : String(start.getHours()).padStart(2,'0')+':'+String(start.getMinutes()).padStart(2,'0');
+        const loc = ev.location ? '<p class="event-sub">'+ev.location.split(',')[0]+'</p>' : '';
+        body.innerHTML += `<div class="event-item"><span class="event-time">${timeStr}</span><div class="event-bar" style="background:${BAR_COLORS[i%BAR_COLORS.length]}"></div><div><p class="event-title">${ev.summary||'Untitled'}</p>${loc}</div></div>`;
+        const dateStr = (ev.start.dateTime||ev.start.date||'').split('T')[0];
+        const dotsEl = document.getElementById('dots-'+dateStr);
+        if (dotsEl && dotsEl.children.length < 3) {
+          const dot = document.createElement('div'); dot.className = 'dot'; dot.style.background = BAR_COLORS[i%BAR_COLORS.length]; dotsEl.appendChild(dot);
+        }
+      });
+    }).catch(() => { body.innerHTML = '<div class="cal-loading" style="color:#C0392B;">Could not load events.</div>'; });
+}
+
+// ── Savings ──
+let savYou = load('sav_you', 91000), savHer = load('sav_her', 93200);
+function initSavings() {
+  document.getElementById('sav-you').value = savYou || '';
+  document.getElementById('sav-her').value = savHer || '';
+  updateSavings();
+}
+function updateSavings() {
+  savYou = parseFloat(document.getElementById('sav-you').value) || 0;
+  savHer = parseFloat(document.getElementById('sav-her').value) || 0;
+  save('sav_you', savYou); save('sav_her', savHer);
+  const total = savYou + savHer;
+  document.getElementById('savings-total').textContent = 'kr ' + total.toLocaleString('da-DK');
+  const pct = total > 0 ? (savYou / total * 100).toFixed(1) : 50;
+  document.getElementById('savings-bar').style.width = pct + '%';
+  document.getElementById('savings-you').textContent = 'You · kr ' + savYou.toLocaleString('da-DK');
+  document.getElementById('savings-her').textContent = 'Her · kr ' + savHer.toLocaleString('da-DK');
+  document.getElementById('savings-sub').textContent = total > 0 ? 'Combined savings' : 'Enter your amounts above';
+}
+initSavings();
+
+// ── Adventures ──
+let adventures = load('adventures', [
+  { id: 1, name: 'Roskilde Festival', date: '2026-06-28' },
+  { id: 2, name: 'Portugal trip', date: '2026-09-15' }
+]);
+let nextAdvId = Math.max(0, ...adventures.map(a => a.id)) + 1;
+let cdTarget = null;
+
+function renderAdventures() {
+  const list = document.getElementById('adv-list');
+  list.innerHTML = '';
+  const sorted = [...adventures].sort((a,b) => new Date(a.date)-new Date(b.date));
+  const upcoming = sorted.filter(a => new Date(a.date) >= new Date());
+  if (upcoming.length) {
+    cdTarget = new Date(upcoming[0].date + 'T12:00:00');
+    document.getElementById('main-adv-name').textContent = upcoming[0].name;
+    const daysLeft = Math.ceil((cdTarget - new Date()) / 86400000);
+    document.getElementById('main-adv-badge').textContent = daysLeft + ' days';
+  }
+  const rest = sorted.slice(0);
+  rest.forEach((a, idx) => {
+    const d = new Date(a.date + 'T12:00:00');
+    const isPast = d < new Date();
+    const div = document.createElement('div');
+    div.className = 'adventure-item';
+    div.innerHTML = `<div><div class="adv-name" style="${isPast?'color:var(--text-3);':''}">${a.name}</div><div class="adv-date">${d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div></div><button class="adv-del" onclick="deleteAdventure(${a.id})">✕</button>`;
+    list.appendChild(div);
+  });
+}
+function addAdventure() {
+  const name = document.getElementById('adv-name-input').value.trim();
+  const date = document.getElementById('adv-date-input').value;
+  if (!name || !date) return;
+  adventures.push({ id: nextAdvId++, name, date });
+  save('adventures', adventures);
+  document.getElementById('adv-name-input').value = '';
+  document.getElementById('adv-date-input').value = '';
+  renderAdventures();
+}
+function deleteAdventure(id) {
+  adventures = adventures.filter(a => a.id !== id);
+  save('adventures', adventures);
+  renderAdventures();
+}
+function updateCountdown() {
+  if (!cdTarget) return;
+  const diff = cdTarget - new Date();
+  if (diff <= 0) { ['cd-days','cd-hrs','cd-min','cd-sec'].forEach(id => document.getElementById(id).textContent = '0'); return; }
+  document.getElementById('cd-days').textContent = Math.floor(diff/86400000);
+  document.getElementById('cd-hrs').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cd-min').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cd-sec').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+renderAdventures();
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ── Stock holdings ──
+let holdings = load('holdings', [
+  { id:1, ticker:'NOVO B', name:'Novo Nordisk', shares:10, buyPrice:350, buyDate:'2024-01-15' },
+  { id:2, ticker:'IUSA', name:'S&P 500 ETF', shares:20, buyPrice:38, buyDate:'2024-03-01' }
+]);
+let nextHoldingId = Math.max(0, ...holdings.map(h=>h.id)) + 1;
+let stockChart = null;
+let livePrice = {};
+
+async function fetchPrice(ticker) {
+  // Yahoo Finance via a CORS proxy
+  try {
+    const symbol = ticker.replace(' ','-');
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1y`;
+    const res = await fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
+    const data = await res.json();
+    const result = data.chart?.result?.[0];
+    if (!result) return null;
+    const closes = result.indicators.quote[0].close;
+    const timestamps = result.timestamp;
+    const currentPrice = closes[closes.length-1];
+    return { current: currentPrice, history: closes.map((c,i) => ({ t: new Date(timestamps[i]*1000), v: c })).filter(p=>p.v) };
+  } catch(e) { return null; }
+}
+
+async function loadHoldingPrices() {
+  for (const h of holdings) {
+    const data = await fetchPrice(h.ticker);
+    if (data) livePrice[h.ticker] = data;
+  }
+  renderHoldings();
+  renderStockChart();
+}
+
+function renderHoldings() {
+  const list = document.getElementById('holdings-list');
+  list.innerHTML = '';
+  holdings.forEach(h => {
+    const live = livePrice[h.ticker];
+    const current = live ? live.current : null;
+    const gainPct = current ? ((current - h.buyPrice) / h.buyPrice * 100).toFixed(1) : null;
+    const gainClass = gainPct === null ? '' : parseFloat(gainPct) >= 0 ? 'badge-green' : 'badge-red';
+    const gainStr = gainPct !== null ? (parseFloat(gainPct) >= 0 ? '+' : '') + gainPct + '%' : '—';
+    const currentVal = current ? '$' + current.toFixed(2) : '—';
+    list.innerHTML += `
+      <div class="holding-row" onclick="toggleHoldingEdit(${h.id})">
+        <div><div class="holding-name">${h.name}</div><div class="holding-ticker">${h.ticker} · ${h.shares} shares · bought $${h.buyPrice}</div></div>
+        <div class="holding-right"><div class="holding-val">${currentVal}</div><span class="badge ${gainClass}" style="font-size:10px;">${gainStr}</span></div>
+      </div>
+      <div class="edit-holding-form" id="edit-form-${h.id}">
+        <div class="form-row three">
+          <input class="fi" id="eh-ticker-${h.id}" value="${h.ticker}" placeholder="Ticker">
+          <input class="fi" id="eh-name-${h.id}" value="${h.name}" placeholder="Name">
+          <input class="fi" id="eh-shares-${h.id}" type="number" value="${h.shares}" placeholder="Shares">
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Days Together Modal -->
-  <div class="modal-overlay" id="daysTogetherModal">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h3>Days Together</h3>
-        <button class="modal-close" data-modal="daysTogetherModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label class="form-label">When did you start your journey together?</label>
-        <input type="date" id="daysTogetherInput" class="form-input" />
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveDaysTogether">Save</button>
+        <div class="form-row">
+          <input class="fi" id="eh-price-${h.id}" type="number" step="0.01" value="${h.buyPrice}" placeholder="Buy price">
+          <input class="fi" id="eh-date-${h.id}" type="date" value="${h.buyDate}">
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Holding Modal -->
-  <div class="modal-overlay" id="holdingModal">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h3 id="holdingModalTitle">Add Holding</h3>
-        <button class="modal-close" data-modal="holdingModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="holdingSymbol" class="form-input" placeholder="Symbol (e.g. AAPL)" style="text-transform:uppercase;" />
-        <input type="text" id="holdingCompany" class="form-input" placeholder="Company name (optional)" />
-        <input type="number" id="holdingShares" class="form-input" placeholder="Shares" step="any" />
-        <input type="number" id="holdingBuyPrice" class="form-input" placeholder="Buy price (USD)" step="any" />
-        <input type="date" id="holdingBuyDate" class="form-input" />
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveHolding">Save</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-small" onclick="event.stopPropagation();saveHolding(${h.id})">Save</button>
+          <button class="btn-small danger" onclick="event.stopPropagation();deleteHolding(${h.id})">Delete</button>
         </div>
-      </div>
-    </div>
-  </div>
+      </div>`;
+  });
+}
 
-  <!-- Add Savings Modal -->
-  <div class="modal-overlay" id="savingsModal">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h3 id="savingsModalTitle">Add Savings Account</h3>
-        <button class="modal-close" data-modal="savingsModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="savingsName" class="form-input" placeholder="Account name" />
-        <input type="number" id="savingsAmount" class="form-input" placeholder="Amount" step="any" />
-        <input type="text" id="savingsCurrency" class="form-input" placeholder="Currency (e.g. USD)" value="USD" />
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveSavings">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
+function toggleHoldingEdit(id) {
+  const form = document.getElementById('edit-form-'+id);
+  form.classList.toggle('open');
+}
+function saveHolding(id) {
+  const h = holdings.find(x=>x.id===id);
+  h.ticker = document.getElementById('eh-ticker-'+id).value.trim();
+  h.name = document.getElementById('eh-name-'+id).value.trim();
+  h.shares = parseFloat(document.getElementById('eh-shares-'+id).value)||0;
+  h.buyPrice = parseFloat(document.getElementById('eh-price-'+id).value)||0;
+  h.buyDate = document.getElementById('eh-date-'+id).value;
+  save('holdings', holdings);
+  loadHoldingPrices();
+}
+function deleteHolding(id) {
+  if (!confirm('Remove this holding?')) return;
+  holdings = holdings.filter(h=>h.id!==id);
+  save('holdings', holdings);
+  renderHoldings(); renderStockChart();
+}
+function openAddHolding() { document.getElementById('add-holding-form').classList.toggle('open'); }
+function closeAddHolding() { document.getElementById('add-holding-form').classList.remove('open'); }
+function saveNewHolding() {
+  const ticker = document.getElementById('h-ticker').value.trim();
+  const name = document.getElementById('h-name').value.trim();
+  const shares = parseFloat(document.getElementById('h-shares').value)||0;
+  const buyPrice = parseFloat(document.getElementById('h-buy-price').value)||0;
+  const buyDate = document.getElementById('h-buy-date').value;
+  if (!ticker || !name) return;
+  holdings.push({ id: nextHoldingId++, ticker, name, shares, buyPrice, buyDate });
+  save('holdings', holdings);
+  closeAddHolding();
+  ['h-ticker','h-name','h-shares','h-buy-price','h-buy-date'].forEach(id => document.getElementById(id).value = '');
+  loadHoldingPrices();
+}
 
-  <!-- Add Project Modal -->
-  <div class="modal-overlay" id="projectModal">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h3>Add Project</h3>
-        <button class="modal-close" data-modal="projectModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <input type="text" id="projectTitle" class="form-input" placeholder="Project title" />
-        <textarea id="projectDesc" class="form-input form-textarea" placeholder="Description (optional)"></textarea>
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveProject">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
+function renderStockChart() {
+  const ctx = document.getElementById('stock-chart').getContext('2d');
+  if (stockChart) { stockChart.destroy(); stockChart = null; }
+  const datasets = holdings.map((h, i) => {
+    const data = livePrice[h.ticker];
+    if (!data) return null;
+    const buyDate = new Date(h.buyDate);
+    const pts = data.history.filter(p => p.t >= buyDate).map(p => ({ x: p.t, y: parseFloat(((p.v - h.buyPrice) / h.buyPrice * 100).toFixed(2)) }));
+    const colors = ['#AFA9EC','#F0997B','#5DCAA5','#85B7EB','#FAC775'];
+    return { label: h.name, data: pts, borderColor: colors[i % colors.length], backgroundColor: 'transparent', borderWidth: 1.5, pointRadius: 0, tension: 0.4 };
+  }).filter(Boolean);
+  if (!datasets.length) return;
+  stockChart = new Chart(ctx, {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { intersect: false, mode: 'index' },
+      plugins: {
+        legend: { display: datasets.length > 1, labels: { font: { family: 'Archivo', size: 10 }, color: '#9a9590', boxWidth: 12, padding: 10 } },
+        tooltip: { backgroundColor: 'rgba(235,228,218,0.95)', titleColor: '#111', bodyColor: '#5a5650', borderColor: 'rgba(0,0,0,0.1)', borderWidth: 0.5, titleFont: { family: 'Archivo', size: 11 }, bodyFont: { family: 'Archivo', size: 11 }, callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + (ctx.parsed.y >= 0 ? '+' : '') + ctx.parsed.y + '%' } }
+      },
+      scales: {
+        x: { type: 'time', time: { unit: 'month', displayFormats: { month: 'MMM yy' } }, grid: { display: false }, ticks: { color: '#9a9590', font: { family: 'Archivo', size: 10 } }, border: { display: false } },
+        y: { grid: { color: 'rgba(0,0,0,0.05)', drawBorder: false }, ticks: { color: '#9a9590', font: { family: 'Archivo', size: 10 }, callback: v => (v >= 0 ? '+' : '') + v + '%' }, border: { display: false } }
+      }
+    }
+  });
+}
+loadHoldingPrices();
 
-  <!-- Add Inspiration Modal -->
-  <div class="modal-overlay" id="inspirationModal">
-    <div class="modal modal-sm">
-      <div class="modal-header">
-        <h3>Add Inspiration</h3>
-        <button class="modal-close" data-modal="inspirationModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <label class="file-upload-area file-upload-sm" for="inspirationImageInput">
-          <span id="inspirationUploadLabel">Upload image or paste URL below</span>
-          <input type="file" id="inspirationImageInput" accept="image/*,.heic,.heif" style="display:none;" />
-        </label>
-        <input type="text" id="inspirationImageUrl" class="form-input" placeholder="Or paste image URL" />
-        <input type="text" id="inspirationTitle" class="form-input" placeholder="Title (optional)" />
-        <input type="text" id="inspirationLink" class="form-input" placeholder="Link URL (optional)" />
-        <div class="modal-actions">
-          <button class="btn-primary" id="saveInspiration">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
+// ── Photos & collage background ──
+let photoDataUrls = load('photo_urls', []);
+let collageInterval = null;
 
-  <!-- Inspiration Lightbox -->
-  <div class="lightbox-overlay" id="lightboxOverlay">
-    <button class="lightbox-close" id="lightboxClose">&times;</button>
-    <div class="lightbox-content">
-      <img id="lightboxImg" src="" alt="" />
-      <div class="lightbox-info">
-        <div class="lightbox-title" id="lightboxTitle"></div>
-        <a class="lightbox-link" id="lightboxLink" href="" target="_blank" rel="noopener"></a>
-      </div>
-    </div>
-  </div>
+function handlePhotos(e) {
+  const files = Array.from(e.target.files);
+  let loaded = 0;
+  if (!files.length) return;
+  files.forEach(file => {
+    // Handle HEIC via canvas conversion attempt, fallback to direct read
+    const reader = new FileReader();
+    reader.onload = ev => {
+      photoDataUrls.push(ev.target.result);
+      loaded++;
+      if (loaded === files.length) {
+        save('photo_urls', photoDataUrls);
+        updatePhotoUI();
+        buildCollage();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-  <script src="js/collage.js"></script>
-  <script src="js/adventure.js"></script>
-  <script src="js/calendar.js"></script>
-  <script src="js/finance.js"></script>
-  <script src="js/projects.js"></script>
-  <script src="js/inspiration.js"></script>
-  <script src="js/app.js"></script>
+function updatePhotoUI() {
+  const ph = document.getElementById('photo-placeholder-inner');
+  const msg = document.getElementById('photo-count-msg');
+  if (photoDataUrls.length > 0) {
+    ph.style.display = 'none';
+    msg.style.display = '';
+    msg.textContent = photoDataUrls.length + ' photo' + (photoDataUrls.length > 1 ? 's' : '') + ' in your collage';
+  } else {
+    ph.style.display = ''; msg.style.display = 'none';
+  }
+}
+
+// Collage layout — photos fill the edges, centre is clear
+const SLOTS = [
+  // Left column
+  {x:0,y:0,w:12,h:33,r:-2},{x:0,y:34,w:13,h:33,r:1.5},{x:0,y:68,w:12,h:32,r:-1},
+  // Right column
+  {x:88,y:0,w:12,h:33,r:2},{x:87,y:34,w:13,h:33,r:-1.5},{x:88,y:68,w:12,h:32,r:1},
+  // Top strip
+  {x:13,y:0,w:11,h:22,r:1},{x:76,y:0,w:11,h:22,r:-2},
+  // Bottom strip
+  {x:13,y:78,w:11,h:22,r:-1},{x:76,y:78,w:11,h:22,r:1.5},
+  // Corners extras
+  {x:25,y:0,w:9,h:18,r:2},{x:66,y:0,w:9,h:18,r:-1},
+  {x:25,y:82,w:9,h:18,r:-2},{x:66,y:82,w:9,h:18,r:1}
+];
+
+function buildCollage() {
+  if (!photoDataUrls.length) return;
+  const bg = document.getElementById('collage-bg');
+  bg.innerHTML = '';
+  // Re-add the after pseudo fade (recreated via a div since we cleared innerHTML)
+  const fade = document.createElement('div');
+  fade.style.cssText = 'position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 65% at 50% 48%,rgba(232,224,213,0.97) 0%,rgba(232,224,213,0.93) 30%,rgba(232,224,213,0.55) 60%,rgba(232,224,213,0) 100%)';
+  bg.appendChild(fade);
+
+  const slots = SLOTS.slice(0, Math.min(SLOTS.length, photoDataUrls.length * 2));
+  slots.forEach((slot, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'col-slot';
+    wrap.style.cssText = `left:${slot.x}vw;top:${slot.y}vh;width:${slot.w}vw;height:${slot.h}vh;transform:rotate(${slot.r}deg);`;
+    const img = document.createElement('img');
+    img.src = photoDataUrls[i % photoDataUrls.length];
+    img.classList.add('hidden');
+    img.onload = () => setTimeout(() => img.classList.replace('hidden','visible'), i * 60);
+    wrap.appendChild(img);
+    bg.insertBefore(wrap, fade);
+  });
+
+  // Shuffle every 30 seconds
+  if (collageInterval) clearInterval(collageInterval);
+  collageInterval = setInterval(() => shuffleCollage(), 30000);
+}
+
+function shuffleCollage() {
+  if (!photoDataUrls.length) return;
+  const imgs = document.querySelectorAll('.col-slot img');
+  const shuffled = [...photoDataUrls].sort(() => Math.random() - 0.5);
+  imgs.forEach((img, i) => {
+    img.classList.replace('visible','hidden');
+    setTimeout(() => {
+      img.src = shuffled[i % shuffled.length];
+      img.onload = () => img.classList.replace('hidden','visible');
+      if (img.complete) img.classList.replace('hidden','visible');
+    }, 600);
+  });
+}
+
+updatePhotoUI();
+if (photoDataUrls.length) buildCollage();
+
+// ── Projects ──
+let editMode = false;
+let projects = load('projects', [
+  {id:1,label:'Find a new apartment in Nørrebro',done:false},
+  {id:2,label:'Book Roskilde tickets',done:false},
+  {id:3,label:'Research Portugal trip for autumn',done:false},
+  {id:4,label:'Buy new dining table',done:false}
+]);
+let completed = load('completed_projects', []);
+let nextProjId = Math.max(4, ...projects.map(x=>x.id), ...completed.map(x=>x.id)) + 1;
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('edit-btn').textContent = editMode ? '✓ Done' : '✏ Edit';
+  renderProjects();
+}
+function renderProjects() {
+  const container = document.getElementById('projects');
+  container.innerHTML = '';
+  projects.filter(p=>!p.done).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'project-item';
+    const actions = editMode ? `<div class="project-actions" style="display:flex;"><button class="proj-btn" onclick="moveProject(${p.id},-1)">↑</button><button class="proj-btn" onclick="moveProject(${p.id},1)">↓</button><button class="proj-btn del" onclick="deleteProject(${p.id})">✕</button></div>` : '<div class="project-actions"></div>';
+    div.innerHTML = `<input type="checkbox" onchange="completeProject(${p.id})" style="width:16px;height:16px;cursor:pointer;flex-shrink:0;accent-color:var(--text);"><span class="project-label">${p.label}</span>${actions}`;
+    container.appendChild(div);
+  });
+  renderCompleted();
+}
+function completeProject(id) {
+  const idx = projects.findIndex(p=>p.id===id);
+  if (idx===-1) return;
+  const proj = projects.splice(idx,1)[0];
+  proj.done = true;
+  proj.completedDate = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  completed.unshift(proj);
+  save('projects', projects); save('completed_projects', completed);
+  renderProjects();
+}
+function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  projects = projects.filter(p=>p.id!==id);
+  save('projects', projects); renderProjects();
+}
+function moveProject(id, dir) {
+  const active = projects.filter(p=>!p.done);
+  const idx = active.findIndex(p=>p.id===id);
+  const ni = idx+dir;
+  if (ni<0||ni>=active.length) return;
+  const ai = projects.indexOf(active[idx]), bi = projects.indexOf(active[ni]);
+  [projects[ai],projects[bi]]=[projects[bi],projects[ai]];
+  save('projects', projects); renderProjects();
+}
+function addProject() {
+  const name = prompt('New project:');
+  if (!name||!name.trim()) return;
+  projects.push({id:nextProjId++,label:name.trim(),done:false});
+  save('projects', projects); renderProjects();
+}
+function renderCompleted() {
+  const section = document.getElementById('completed-section');
+  const list = document.getElementById('completed-list');
+  if (!completed.length) { section.style.display='none'; return; }
+  section.style.display='';
+  document.getElementById('completed-count').textContent = completed.length;
+  list.innerHTML='';
+  completed.forEach(p => {
+    const div = document.createElement('div'); div.className='completed-item';
+    div.innerHTML=`<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--text-3)" stroke-width="1"/><path d="M4.5 7l2 2 3-3" stroke="var(--text-3)" stroke-width="1.2" stroke-linecap="round"/></svg><span class="completed-label">${p.label}</span><span class="completed-date">${p.completedDate||''}</span>`;
+    list.appendChild(div);
+  });
+}
+function toggleCompleted() {
+  document.getElementById('completed-list').classList.toggle('hidden');
+  document.getElementById('completed-header').classList.toggle('collapsed');
+}
+renderProjects();
+</script>
 </body>
 </html>
